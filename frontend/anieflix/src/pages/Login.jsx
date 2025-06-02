@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import Snackbar from '@mui/material/Snackbar'
+import Alert from '@mui/material/Alert'
+
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'error' })
+
   const navigate = useNavigate()
 
   // ✅ Redirect nếu đã đăng nhập
@@ -22,9 +27,12 @@ export default function Login() {
       localStorage.setItem('token', res.data.token)
       navigate('/browse')
     } catch (err) {
-      alert('Sai tài khoản hoặc mật khẩu')
+      const msg = err.response?.data?.error || 'Đăng nhập thất bại'
+      setSnackbar({ open: true, message: msg, severity: 'error' })
     }
   }
+
+
 
   return (
     <div className="relative w-full h-screen bg-black text-white overflow-hidden flex items-center justify-center">
@@ -56,11 +64,25 @@ export default function Login() {
           />
           <button
             type="submit"
-            className="w-full bg-red-600 hover:bg-red-700 transition py-3 rounded font-semibold"
+            className="w-full bg-red-600 hover:bg-red-700 transition py-3 rounded font-semibold cursor-pointer :opacity-50 disabled:cursor-not-allowed"
           >
             Sign In
           </button>
         </form>
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={4000}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        >
+          <Alert
+            severity={snackbar.severity}
+            variant="filled"
+            onClose={() => setSnackbar({ ...snackbar, open: false })}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
 
         <div className="flex items-center justify-between text-sm text-gray-300 mt-4">
           <label className="flex items-center gap-2">

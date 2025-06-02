@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import Snackbar from '@mui/material/Snackbar'
+import Alert from '@mui/material/Alert'
+
 
 export default function Register() {
   const [email, setEmail] = useState('')
@@ -8,6 +11,12 @@ export default function Register() {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [birthdate, setBirthdate] = useState('')
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  })
+
   const navigate = useNavigate()
 
   const handleRegister = async (e) => {
@@ -17,12 +26,19 @@ export default function Register() {
         name, email, password, phone, birthdate
       })
 
-      alert('Đăng ký thành công! Mời bạn đăng nhập.')
-      navigate('/login')
+      setSnackbar({
+        open: true,
+        message: 'Đăng ký thành công! Mời bạn đăng nhập.',
+        severity: 'success'
+      })
+
+      setTimeout(() => navigate('/login'), 2000)
     } catch (err) {
-      alert(err.response?.data?.error || 'Đăng ký thất bại')
+      const msg = err.response?.data?.error || 'Đăng ký thất bại'
+      setSnackbar({ open: true, message: msg, severity: 'error' })
     }
   }
+
 
   return (
     <div className="w-full h-screen bg-black flex items-center justify-center text-white">
@@ -69,10 +85,25 @@ export default function Register() {
             className="w-full p-3 bg-[#333] rounded"
             required
           />
-          <button type="submit" className="w-full bg-red-600 hover:bg-red-700 py-3 rounded font-semibold">
+          <button type="submit" className="w-full bg-red-600 hover:bg-red-700 py-3 rounded font-semibold cursor-pointer transition-colors">
             Sign Up
           </button>
         </form>
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={4000}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        >
+          <Alert
+            onClose={() => setSnackbar({ ...snackbar, open: false })}
+            severity={snackbar.severity}
+            variant="filled"
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
+
         <p className="text-sm text-gray-400 mt-6">
           Already have an account?{' '}
           <span onClick={() => navigate('/login')} className="text-white hover:underline cursor-pointer">
