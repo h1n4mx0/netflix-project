@@ -11,7 +11,6 @@ def get_user_id_from_token():
     print(token)
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=['HS256'])
-        print("✅ Payload decoded:", payload)
         return payload.get('user_id')
     except jwt.ExpiredSignatureError:
         print("⛔ Token hết hạn")

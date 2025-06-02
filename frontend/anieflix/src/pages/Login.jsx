@@ -72,7 +72,9 @@ export default function Login() {
 
         <div className="text-sm text-gray-400 mt-6">
           New to Anieflix?{' '}
-          <span className="text-white hover:underline cursor-pointer">Sign up now</span>
+          <span className="text-white hover:underline cursor-pointer" onClick={() => navigate('/register')}>
+            Sign up now
+          </span>
         </div>
       </div>
     </div>

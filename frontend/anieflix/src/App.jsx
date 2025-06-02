@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 // Pages
 import Home from './pages/Home'
 import Login from './pages/Login'
+import Register from './pages/Register'
 import MovieDetail from './pages/MovieDetail'
 import Settings from './pages/Settings'
 import AdminUpload from './pages/AdminUpload'
@@ -18,6 +19,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
         <Route path="/browse" element={<Layout />}>
           <Route index element={<Home />} />
