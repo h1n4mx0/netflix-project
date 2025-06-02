@@ -12,7 +12,6 @@ def verify_email():
         return jsonify({'error': 'Thiếu token'}), 400
 
     conn = get_db_connection()
-    print("hellooooooooooooooooooooooooooooooooooooooooooooo")
     with conn.cursor() as cursor:
         cursor.execute("SELECT id FROM users WHERE verification_token = %s", (token,))
         user = cursor.fetchone()

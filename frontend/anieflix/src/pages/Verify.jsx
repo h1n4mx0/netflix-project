@@ -29,7 +29,6 @@ export default function Verify() {
       didRun = true
 
       const token = params.get('token')
-      console.log('[🔍 TOKEN]', token)
       if (!token) {
         setStatus('error')
         return
