@@ -113,7 +113,7 @@ export default function Navbar() {
               {dropdownOpen && (
                 <div className="absolute right-0 mt-3 w-44 bg-[#141414] text-white rounded-md shadow-lg text-sm overflow-hidden z-50">
                   <Link
-                    to="/settings"
+                    to="/browse/profile"
                     onClick={() => setDropdownOpen(false)}
                     className="block px-4 py-3 hover:bg-white/10 transition"
                   >

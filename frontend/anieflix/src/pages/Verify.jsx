@@ -37,7 +37,7 @@ export default function Verify() {
       try {
         await axios.get(`/api/verify?token=${token}`)
         setStatus('success')
-        setTimeout(() => navigate('/login'), 3000)
+        setTimeout(() => navigate('/login'), 1000)
       } catch (err) {
         console.log(err)
         setStatus('error')

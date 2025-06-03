@@ -6,9 +6,12 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import MovieDetail from './pages/MovieDetail'
 import Settings from './pages/Settings'
+import Profile from './pages/Profile'
 import AdminUpload from './pages/AdminUpload'
 import LandingPage from './pages/LandingPage'
 import Verify from './pages/Verify'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 // Layout
 import Layout from './layouts/Layout'
 import { Toaster } from 'react-hot-toast'
@@ -22,13 +25,14 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify" element={<Verify />} />
-        
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         
         {/* Protected routes */}
         <Route path="/browse" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="/browse/movie/:id" element={<MovieDetail />} />
-          <Route path="settings" element={<Settings />} />
+          <Route path="movie/:id" element={<MovieDetail />} />
+          <Route path="profile" element={<Profile />} />
           <Route path="admin/upload" element={<AdminUpload />} />
         </Route>
       </Routes>

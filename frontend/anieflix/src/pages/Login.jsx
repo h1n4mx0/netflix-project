@@ -12,7 +12,6 @@ export default function Login() {
 
   const navigate = useNavigate()
 
-  // ✅ Redirect nếu đã đăng nhập
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (token) {
@@ -25,7 +24,12 @@ export default function Login() {
     try {
       const res = await axios.post('/api/login', { email, password })
       localStorage.setItem('token', res.data.token)
-      navigate('/browse')
+      setSnackbar({
+        open: true,
+        message: 'Đăng nhập thành công! Đang chuyển hướng...',
+        severity: 'success'
+      })
+      setTimeout(() => navigate('/browse'), 1000)
     } catch (err) {
       const msg = err.response?.data?.error || 'Đăng nhập thất bại'
       setSnackbar({ open: true, message: msg, severity: 'error' })
@@ -84,13 +88,22 @@ export default function Login() {
           </Alert>
         </Snackbar>
 
-        <div className="flex items-center justify-between text-sm text-gray-300 mt-4">
-          <label className="flex items-center gap-2">
-            <input type="checkbox" className="accent-red-600" />
-            Remember me
-          </label>
-          <a href="#" className="hover:underline">Need help?</a>
-        </div>
+        <div className="text-sm text-gray-300 mt-4  space-y-1">
+  <label className="inline-flex items-center gap-2">
+    <input type="checkbox" className="accent-red-600" />
+    Remember me
+  </label>
+  <div className="flex justify-between text-gray-400">
+    <a href="#" className="hover:underline mr-3">Need help?</a>
+    <span
+      className="text-blue-400 hover:underline cursor-pointer"
+      onClick={() => navigate('/forgot-password')}
+    >
+      Forgot password?
+    </span>
+  </div>
+</div>
+
 
         <div className="text-sm text-gray-400 mt-6">
           New to Anieflix?{' '}
