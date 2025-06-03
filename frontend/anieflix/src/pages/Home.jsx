@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from '../api/axios'
-import MovieRow from '../components/MovieRow'
+import SlideRow from '../components/SlideRow'
 import Banner from '../components/Banner'
 import MoviePopup from '../components/MoviePopup' // 👈 import component popup mới
 
@@ -32,9 +32,9 @@ export default function Home() {
   return (
     <div className="pt-14 px-4 sm:px-8 pb-16">
       <Banner movies={trending} />
-      <MovieRow title="🔥 Phim đang hot" movies={trending} onMovieClick={setSelectedMovie} />
-      <MovieRow title="⭐ Được người xem yêu thích" movies={topRated} onMovieClick={setSelectedMovie} />
-      <MovieRow title="📅 Phim sắp chiếu" movies={upcoming} onMovieClick={setSelectedMovie} />
+      <SlideRow title="🔥 Phim đang hot" items={trending} onItemClick={setSelectedMovie} />
+      <SlideRow title="⭐ Được người xem yêu thích" items={topRated} onItemClick={setSelectedMovie} />
+      <SlideRow title="📅 Phim sắp chiếu" items={upcoming} onItemClick={setSelectedMovie} />
 
       {/* Popup hiển thị khi click vào phim */}
       {selectedMovie && (

@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar'
 
 export default function Layout() {
   return (
-    <div className="bg-black min-h-screen text-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#4c1d95] to-[#0f172a] text-white">
       {/* Navbar cố định trên cùng */}
       <Navbar />
 
