@@ -3,7 +3,9 @@ import Navbar from '../components/Navbar'
 
 export default function Layout() {
   return (
-    <div className="bg-gradient-to-br from-yellow-600 to-yellow-900 min-h-screen text-white flex flex-col">
+
+    <div className="bg-gradient-to-br from-[#141E30] to-[#243B55] min-h-screen text-white flex flex-col">
+
       {/* Navbar cố định trên cùng */}
       <Navbar />
 
