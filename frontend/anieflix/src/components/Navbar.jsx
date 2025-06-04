@@ -44,8 +44,8 @@ export default function Navbar() {
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-colors duration-500 ${
         isScrolled
-          ? 'bg-black/70 shadow-md'
-          : 'bg-gradient-to-b from-black/30 to-transparent'
+          ? 'bg-yellow-500/80 backdrop-blur-md shadow-md'
+          : 'bg-gradient-to-b from-yellow-500/20 to-transparent backdrop-blur-sm'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-14 flex items-center justify-between">
