@@ -51,10 +51,10 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-colors duration-500 ${
-  isScrolled
-    ? 'bg-[#4c1d95] shadow-md backdrop-blur-md'
-    : 'bg-gradient-to-b from-[#4c1d95]/80 to-[#4c1d95]/0'
-}`}
+        isScrolled
+          ? 'bg-yellow-500/80 backdrop-blur-md shadow-md'
+          : 'bg-gradient-to-b from-yellow-500/20 to-transparent backdrop-blur-sm'
+      }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-14 flex items-center justify-between">
         {/* Logo + Menu */}
