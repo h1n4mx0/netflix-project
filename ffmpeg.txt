@@ -1,0 +1,1 @@
+ffmpeg -i "TẬP 1 _ BỐ ƠI MÌNH ĐI ĐÂU THẾ_ Bố Neko, Trung Ruồi, Duy Hưng, Phan Đinh Tùng lần đầu Vượt Chông Gai.mp4" -profile:v baseline -level 3.0 -start_number 0 -hls_time 10 -hls_list_size 0 -f hls bomddt_1.m3u8

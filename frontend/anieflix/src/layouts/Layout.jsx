@@ -22,6 +22,7 @@ export default function Layout() {
     return () => clearInterval(id)
   }, [navigate])
 
+
   return (
     <div
       className={`min-h-screen flex flex-col ${
@@ -30,6 +31,7 @@ export default function Layout() {
           : 'bg-white text-gray-900'
       }`}
     >
+
       {/* Navbar cố định trên cùng */}
       <Navbar />
 
