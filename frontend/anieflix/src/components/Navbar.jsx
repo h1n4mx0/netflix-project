@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { useEffect, useState, useRef } from 'react'
-import { FaHome, FaCog, FaUpload } from 'react-icons/fa'
+import { useEffect, useState, useRef, useContext } from 'react'
+import { FaHome, FaCog, FaUpload, FaMoon, FaSun } from 'react-icons/fa'
+import { ThemeContext } from '../context/ThemeContext'
 import logo from '../assets/anieflix.svg'
 import avatar from '../assets/avatar-default.png'
 
@@ -10,6 +11,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const dropdownRef = useRef()
   const navigate = useNavigate()
+  const { theme, toggleTheme } = useContext(ThemeContext)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -44,8 +46,12 @@ export default function Navbar() {
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-colors duration-500 ${
         isScrolled
-          ? 'bg-black/70 shadow-md'
-          : 'bg-gradient-to-b from-black/30 to-transparent'
+          ? theme === 'dark'
+            ? 'bg-yellow-500/80 text-white backdrop-blur-md shadow-md'
+            : 'bg-white/80 text-gray-900 backdrop-blur-md shadow-md'
+          : theme === 'dark'
+            ? 'bg-gradient-to-b from-yellow-500/20 to-transparent text-white backdrop-blur-sm'
+            : 'bg-gradient-to-b from-white/30 to-transparent text-gray-900 backdrop-blur-sm'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-14 flex items-center justify-between">
@@ -75,18 +81,27 @@ export default function Navbar() {
             <Link to="/browse" title="Home">
               <FaHome className="hover:text-gray-300 transition" />
             </Link>
-            {isLoggedIn && (
-              <>
-                <Link to="/settings" title="Settings">
-                  <FaCog className="hover:text-gray-300 transition" />
-                </Link>
-                <Link to="/admin/upload" title="Upload">
-                  <FaUpload className="hover:text-gray-300 transition" />
-                </Link>
-              </>
-            )}
-          </div>
+          {isLoggedIn && (
+            <>
+              <Link to="/settings" title="Settings">
+                <FaCog className="hover:text-gray-300 transition" />
+              </Link>
+              <Link to="/admin/upload" title="Upload">
+                <FaUpload className="hover:text-gray-300 transition" />
+              </Link>
+            </>
+          )}
         </div>
+
+        {/* Theme toggle */}
+        <button
+          onClick={toggleTheme}
+          className="text-white text-xl hover:text-gray-300 transition md:ml-4"
+          title="Toggle theme"
+        >
+          {theme === 'dark' ? <FaSun /> : <FaMoon />}
+        </button>
+      </div>
 
         {/* Auth / Avatar */}
         <div className="relative" ref={dropdownRef}>
