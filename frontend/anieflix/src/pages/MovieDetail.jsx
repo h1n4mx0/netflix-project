@@ -46,7 +46,7 @@ export default function MovieDetail() {
 
   return (
     <div className="min-h-screen pt-14 px-4 sm:px-8 pb-16">
-      {/* Backdrop full screen */}
+
       <div
         className="absolute inset-0 -z-10 bg-cover bg-center"
         style={{
