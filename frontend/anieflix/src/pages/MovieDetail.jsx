@@ -45,7 +45,7 @@ export default function MovieDetail() {
   if (!movie) return <div className="text-white text-center mt-20">Đang tải phim...</div>
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen pt-14 px-4 sm:px-8 pb-16">
       {/* Banner */}
       <div
         className="w-full h-[300px] sm:h-[450px] bg-cover bg-center relative"
@@ -64,7 +64,7 @@ export default function MovieDetail() {
       </div>
 
       {/* Chi tiết + hành động */}
-      <div className="max-w-6xl mx-auto px-6 sm:px-10 py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 py-12">
         <div className="flex flex-col md:flex-row gap-10">
           {/* Poster */}
           <div className="md:w-[220px]">

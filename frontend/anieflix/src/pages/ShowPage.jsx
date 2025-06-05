@@ -22,7 +22,7 @@ export default function ShowPage() {
   }
 
   return (
-    <div className="px-6 sm:px-10 py-16">
+    <div className="pt-14 px-4 sm:px-8 pb-16">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl sm:text-4xl font-bold mb-8">📺 Chương trình thực tế</h1>
 
