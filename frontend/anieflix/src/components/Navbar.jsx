@@ -91,7 +91,7 @@ export default function Navbar() {
             <Link to="/browse" className="hover:text-gray-400 transition">Phim</Link>
           </div>
           <div className="hidden md:flex items-center space-x-6 text-white text-sm font-semibold font-sans">
-            <Link to="/browse" className="hover:text-gray-400 transition">Truyền hình</Link>
+            <Link to="/browse/shows" className="hover:text-gray-400 transition">Truyền hình</Link>
           </div>
           
           {/* Mobile icon menu */}
