@@ -15,14 +15,14 @@ export default function ShowPage() {
 
   if (!shows.length) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center text-white text-lg">
+      <div className="min-h-screen flex items-center justify-center text-lg">
         Không có chương trình nào được hiển thị.
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-black text-white px-6 sm:px-10 py-16">
+    <div className="pt-14 px-4 sm:px-8 pb-16">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl sm:text-4xl font-bold mb-8">📺 Chương trình thực tế</h1>
 
