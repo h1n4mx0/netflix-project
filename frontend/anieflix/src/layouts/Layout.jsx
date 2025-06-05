@@ -1,10 +1,26 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { ThemeContext } from '../context/ThemeContext'
+import { isTokenExpired } from '../utils/auth'
 
 export default function Layout() {
   const { theme } = useContext(ThemeContext)
+  const navigate = useNavigate()
+
+  // Check token expiry on mount and at intervals
+  useEffect(() => {
+    const checkToken = () => {
+      const token = localStorage.getItem('token')
+      if (!token || isTokenExpired(token)) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
+    }
+    checkToken()
+    const id = setInterval(checkToken, 60000)
+    return () => clearInterval(id)
+  }, [navigate])
 
   return (
     <div
