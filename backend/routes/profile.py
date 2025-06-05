@@ -36,7 +36,9 @@ def update_profile():
             birthdate = cursor.fetchone()["birthdate"]
         else:
             try:
-                birthdate = datetime.strptime(birthdate_raw[:10], '%Y-%m-%d').date()
+                birthdate = datetime.datetime.strptime(
+                    birthdate_raw[:10], '%Y-%m-%d'
+                ).date()
             except:
                 return jsonify({'error': 'Định dạng ngày không hợp lệ'}), 400
         cursor.execute("""

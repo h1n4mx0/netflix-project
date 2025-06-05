@@ -13,6 +13,9 @@ def login():
     email = data.get("email")
     password = data.get("password")
 
+    if not email or not password:
+        return jsonify({'error': 'Thiếu thông tin'}), 400
+
     conn = get_db_connection()
     print("Connecting to database...")
     if not conn:

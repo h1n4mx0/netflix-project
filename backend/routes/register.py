@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from db import get_db_connection
 import uuid
-from utils.email_utils import send_verification_email  # nhớ tạo file utils/email_utils.py
+from utils.email_utils import send_verification_email  # helper for sending verification email
 
 register_bp = Blueprint('register', __name__)
 
