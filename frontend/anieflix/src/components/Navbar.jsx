@@ -55,10 +55,12 @@ export default function Navbar() {
       className={`fixed top-0 left-0 w-full z-50 transition-colors duration-500 ${
         isScrolled
           ? theme === 'dark'
-            ? 'bg-yellow-500/80 text-white backdrop-blur-md shadow-md'
+
+            ? 'bg-[#0b0c1c]/80 text-white backdrop-blur-md shadow-md'
             : 'bg-white/80 text-gray-900 backdrop-blur-md shadow-md'
           : theme === 'dark'
-            ? 'bg-gradient-to-b from-yellow-500/20 to-transparent text-white backdrop-blur-sm'
+            ? 'bg-gradient-to-b from-[#0b0c1c] to-transparent text-white backdrop-blur-sm'
+
             : 'bg-gradient-to-b from-white/30 to-transparent text-gray-900 backdrop-blur-sm'
       }`}
     >

@@ -22,12 +22,11 @@ export default function Layout() {
     return () => clearInterval(id)
   }, [navigate])
 
-
   return (
     <div
       className={`min-h-screen flex flex-col ${
         theme === 'dark'
-          ? 'bg-gradient-to-br from-yellow-600 to-yellow-900 text-white'
+          ? 'bg-gradient-to-br from-[#0b0c1c] to-[#1e2a48] text-white'
           : 'bg-white text-gray-900'
       }`}
     >
