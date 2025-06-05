@@ -46,17 +46,25 @@ export default function MovieDetail() {
 
   return (
     <div className="min-h-screen pt-14 px-4 sm:px-8 pb-16">
-      {/* Banner */}
+
       <div
-        className="w-full h-[300px] sm:h-[450px] bg-cover bg-center relative"
+        className="absolute inset-0 -z-10 bg-cover bg-center"
         style={{
           backgroundImage: movie.backdrop_path
             ? `url(${movie.backdrop_path})`
             : `url('https://via.placeholder.com/1280x720?text=No+Backdrop')`
         }}
-      >
+      />
+      {/* Blur dark edges */}
+      <div className="absolute inset-0 -z-10 pointer-events-none">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(0,0,0,0)_60%,_rgba(0,0,0,0.6)_100%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/60 to-black" />
+      </div>
+
+      {/* Banner */}
+      <div className="w-full h-screen flex items-end relative mb-10">
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
-        <div className="absolute bottom-6 left-6">
+        <div className="relative z-10 p-6">
           <button className="bg-yellow-400 hover:bg-yellow-500 text-black text-lg px-6 py-3 rounded-full font-semibold flex items-center gap-2 shadow-lg transition">
             <Play size={22} /> Xem Ngay
           </button>
