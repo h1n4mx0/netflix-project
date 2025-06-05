@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState, useRef, useContext } from 'react'
-import { FaHome, FaCog, FaUpload, FaMoon, FaSun } from 'react-icons/fa'
+import { FaHome, FaCog, FaUpload, FaMoon, FaSun, FaSearch } from 'react-icons/fa'
 import { ThemeContext } from '../context/ThemeContext'
 import logo from '../assets/anieflix.svg'
 import avatar from '../assets/avatar-default.png'
