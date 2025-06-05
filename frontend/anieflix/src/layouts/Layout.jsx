@@ -30,7 +30,6 @@ export default function Layout() {
           : 'bg-white text-gray-900'
       }`}
     >
-
       {/* Navbar cố định trên cùng */}
       <Navbar />
 
