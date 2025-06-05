@@ -1,7 +1,7 @@
 // ShowPage.jsx
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import axios from '../api/axios'
 
 export default function ShowPage() {
   const navigate = useNavigate()

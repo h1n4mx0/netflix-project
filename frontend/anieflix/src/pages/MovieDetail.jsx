@@ -45,7 +45,7 @@ export default function MovieDetail() {
   if (!movie) return <div className="text-white text-center mt-20">Đang tải phim...</div>
 
   return (
-    <div className="min-h-screen pt-14 px-4 sm:px-8 pb-16">
+    <div className="relative min-h-screen pt-14 px-4 sm:px-8 pb-16">
 
       <div
         className="absolute inset-0 -z-10 bg-cover bg-center"
