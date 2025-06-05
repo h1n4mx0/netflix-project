@@ -13,6 +13,8 @@ import {
   Paper,
   Grid,
   Divider,
+  Avatar,
+  Stack,
 } from '@mui/material'
 
 export default function ProfilePage() {
@@ -60,10 +62,16 @@ export default function ProfilePage() {
   }
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', bgcolor: 'black' }}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'linear-gradient(135deg, #141E30, #243B55)' }}>
 
-        <Container maxWidth="sm">
+        <Container maxWidth="sm" sx={{ py: 4 }}>
         <Paper sx={{ p: 4, borderRadius: 3, backgroundColor: '#1e1e1e', color: 'white' }}>
+            <Stack spacing={2} alignItems="center" sx={{ mb: 3 }}>
+                <Avatar sx={{ width: 72, height: 72, bgcolor: 'primary.main' }}>
+                    {profile.name ? profile.name.charAt(0).toUpperCase() : ''}
+                </Avatar>
+                <Typography variant="h5">Hồ sơ của tôi</Typography>
+            </Stack>
             <Tabs
             value={tab}
             onChange={(e, val) => setTab(val)}
