@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState, useRef, useContext } from 'react'
-import { FaHome, FaCog, FaUpload, FaMoon, FaSun } from 'react-icons/fa'
+import { FaHome, FaCog, FaUpload, FaMoon, FaSun, FaSearch } from 'react-icons/fa'
 import { ThemeContext } from '../context/ThemeContext'
 import logo from '../assets/anieflix.svg'
 import avatar from '../assets/avatar-default.png'
@@ -9,6 +9,7 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const dropdownRef = useRef()
   const navigate = useNavigate()
   const { theme, toggleTheme } = useContext(ThemeContext)
@@ -42,15 +43,24 @@ export default function Navbar() {
     navigate('/')
   }
 
+  const handleSearch = (e) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
+    }
+  }
+
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-colors duration-500 ${
         isScrolled
           ? theme === 'dark'
+
             ? 'bg-[#0b0c1c]/80 text-white backdrop-blur-md shadow-md'
             : 'bg-white/80 text-gray-900 backdrop-blur-md shadow-md'
           : theme === 'dark'
             ? 'bg-gradient-to-b from-[#0b0c1c] to-transparent text-white backdrop-blur-sm'
+
             : 'bg-gradient-to-b from-white/30 to-transparent text-gray-900 backdrop-blur-sm'
       }`}
     >
@@ -64,19 +74,29 @@ export default function Navbar() {
               className="w-[92px] h-auto hover:opacity-80 transition"
             />
           </Link>
-
-          {/* Menu chữ cho màn hình lớn */}
+          {/* 🔍 Search form */}
+        <form onSubmit={handleSearch} className="hidden md:flex items-center bg-white/10 text-white px-3 py-1 rounded-sm backdrop-blur-sm">
+          <FaSearch className="text-white text-sm mr-2" />
+          <input
+            type="text"
+            placeholder="Tìm phim hoặc chương trình..."
+            className="bg-transparent outline-none text-sm placeholder-gray-350 w-48"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </form>
+          {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-6 text-white text-md font-semibold">
-            <Link to="/browse" className="hover:text-gray-300 transition">Trang chủ</Link>
-            {isLoggedIn && (
-              <>
-                <Link to="#" className="hover:text-gray-300 transition">#</Link>
-                <Link to="#" className="hover:text-gray-300 transition">#</Link>
-              </>
-            )}
+            <Link to="/browse" className="hover:text-gray-400 transition">Trang chủ</Link>
           </div>
-
-          {/* Menu icon cho màn hình nhỏ */}
+          <div className="hidden md:flex items-center space-x-6 text-white text-md font-semibold">
+            <Link to="/browse" className="hover:text-gray-400 transition">Phim</Link>
+          </div>
+          <div className="hidden md:flex items-center space-x-6 text-white text-md font-semibold">
+            <Link to="/browse" className="hover:text-gray-400 transition">Truyền hình</Link>
+          </div>
+          
+          {/* Mobile icon menu */}
           <div className="flex md:hidden items-center space-x-4 text-white text-xl">
             <Link to="/browse" title="Home">
               <FaHome className="hover:text-gray-300 transition" />

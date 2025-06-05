@@ -4,7 +4,10 @@ import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import MoviePage from './pages/MoviePage'
 import MovieDetail from './pages/MovieDetail'
+import ShowPage from './pages/ShowPage'
+import ShowDetail from './pages/ShowDetail'
 import Settings from './pages/Settings'
 import Profile from './pages/Profile'
 import AdminUpload from './pages/AdminUpload'
@@ -15,6 +18,7 @@ import ResetPassword from './pages/ResetPassword'
 // Layout
 import Layout from './layouts/Layout'
 import { Toaster } from 'react-hot-toast'
+
 
 export default function App() {
   return (
@@ -31,6 +35,10 @@ export default function App() {
         {/* Protected routes */}
         <Route path="/browse" element={<Layout />}>
           <Route index element={<Home />} />
+
+          <Route path="shows" element={<ShowPage />} />
+          <Route path="shows/:id" element={<ShowDetail />} />
+          <Route path="movies" element={<MoviePage />} />
           <Route path="movie/:id" element={<MovieDetail />} />
           <Route path="profile" element={<Profile />} />
           <Route path="admin/upload" element={<AdminUpload />} />

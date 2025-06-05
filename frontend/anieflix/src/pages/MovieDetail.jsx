@@ -5,22 +5,22 @@ import { Play, Plus, ThumbsUp, ChevronLeft, ChevronRight } from 'lucide-react'
 
 export default function MovieDetail() {
   const { id } = useParams()
-  const [movie, setMovie] = useState(null)
   const navigate = useNavigate()
+  const [movie, setMovie] = useState(null)
   const [isFav, setIsFav] = useState(false)
   const [castPage, setCastPage] = useState(0)
   const itemsPerPage = 5
 
   useEffect(() => {
-    const checkFavorite = async () => {
-      try {
-        const res = await axios.get('/favorites')
-        setIsFav(res.data.includes(Number(id)))
-      } catch (err) {
-        console.error('[❌ Favorites]', err)
-      }
-    }
-    checkFavorite()
+    axios.get('/favorites').then(res => {
+      setIsFav(res.data.includes(Number(id)))
+    }).catch(() => {})
+  }, [id])
+
+  useEffect(() => {
+    axios.get(`/movies/${id}`).then(res => {
+      setMovie(res.data)
+    }).catch(() => {})
   }, [id])
 
   const toggleFavorite = async () => {
@@ -32,23 +32,8 @@ export default function MovieDetail() {
         await axios.post('/favorites', { movie_id: id })
         setIsFav(true)
       }
-    } catch (err) {
-      console.error('[❌ Toggle Favorite]', err)
-    }
+    } catch (err) {}
   }
-
-  useEffect(() => {
-    const fetchMovie = async () => {
-      try {
-        const res = await axios.get(`/movies/${id}`)
-        setMovie(res.data)
-      } catch (err) {
-        console.error('[❌ MovieDetail]', err)
-      }
-    }
-
-    fetchMovie()
-  }, [id])
 
   const paginatedCast = movie?.cast?.slice(
     castPage * itemsPerPage,
@@ -57,106 +42,122 @@ export default function MovieDetail() {
 
   const totalPages = Math.ceil((movie?.cast?.length || 0) / itemsPerPage)
 
-  if (!movie) {
-    return <div className="text-white text-center mt-20">Loading movie...</div>
-  }
+  if (!movie) return <div className="text-white text-center mt-20">Đang tải phim...</div>
 
   return (
-    <div className="min-h-screen bg-black text-white relative">
+    <div className="min-h-screen bg-black text-white">
+      {/* Banner */}
       <div
-        className="w-full h-[500px] sm:h-[600px] bg-cover bg-center relative"
+        className="w-full h-[300px] sm:h-[450px] bg-cover bg-center relative"
         style={{
           backgroundImage: movie.backdrop_path
             ? `url(${movie.backdrop_path})`
             : `url('https://via.placeholder.com/1280x720?text=No+Backdrop')`
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
+        <div className="absolute bottom-6 left-6">
+          <button className="bg-yellow-400 hover:bg-yellow-500 text-black text-lg px-6 py-3 rounded-full font-semibold flex items-center gap-2 shadow-lg transition">
+            <Play size={22} /> Xem Ngay
+          </button>
+        </div>
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto -mt-44 sm:-mt-56 p-6 sm:p-10 bg-black/80 rounded-lg shadow-lg flex flex-col sm:flex-row items-start gap-6">
-        <img
-          src={movie.poster_path || 'https://via.placeholder.com/300x450?text=No+Image'}
-          alt={movie.title}
-          className="w-[140px] sm:w-[200px] rounded-lg shadow-md object-cover"
-        />
-
-        <div className="flex-1">
-          <h1 className="text-3xl sm:text-5xl font-bold mb-4">{movie.title}</h1>
-          <p className="text-gray-300 text-base sm:text-lg mb-6">
-            {movie.overview || 'No description available.'}
-          </p>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm sm:text-base text-gray-300 mb-6">
-            <div><strong>Language:</strong> {movie.original_language?.toUpperCase()}</div>
-            <div><strong>Release Date:</strong> {movie.release_date}</div><br></br>
-            <div><strong>Runtime:</strong> {movie.runtime} mins</div>
-            <div><strong>Rating:</strong> ⭐ {movie.vote_average} ({movie.vote_count} votes)</div>
+      {/* Chi tiết + hành động */}
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 py-12">
+        <div className="flex flex-col md:flex-row gap-10">
+          {/* Poster */}
+          <div className="md:w-[220px]">
+            <img
+              src={movie.poster_path || 'https://via.placeholder.com/300x450?text=No+Image'}
+              alt={movie.title}
+              className="w-full rounded-md shadow"
+            />
           </div>
 
-          {paginatedCast.length > 0 && (
-            <div className="mt-6">
-              <h2 className="text-2xl font-bold mb-4">Diễn viên</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 mb-4">
-                {paginatedCast.map((actor, idx) => (
-                  <div key={idx} className="text-center text-sm">
-                    {actor.profile_path && (
-                      <img
-                        src={actor.profile_path}
-                        alt={actor.name}
-                        className="w-24 h-36 object-cover rounded-md mx-auto mb-2 shadow"
-                      />
-                    )}
-                    <div className="font-semibold">{actor.name}</div>
-                    <div className="text-gray-400 text-xs">vai {actor.character}</div>
-                  </div>
-                ))}
-              </div>
-              <div className="flex justify-center gap-4">
-                <button
-                  disabled={castPage === 0}
-                  onClick={() => setCastPage(p => Math.max(p - 1, 0))}
-                  className="px-3 py-1 rounded bg-white/10 text-white border border-white/20 hover:bg-white/20 disabled:opacity-40"
-                >
-                  <ChevronLeft size={18} />
-                </button>
-                <button
-                  disabled={castPage === totalPages - 1}
-                  onClick={() => setCastPage(p => Math.min(p + 1, totalPages - 1))}
-                  className="px-3 py-1 rounded bg-white/10 text-white border border-white/20 hover:bg-white/20 disabled:opacity-40"
-                >
-                  <ChevronRight size={18} />
-                </button>
-              </div>
-            </div>
-          )}
+          {/* Nội dung */}
+          <div className="flex-1">
+            <h1 className="text-3xl sm:text-4xl font-bold mb-2">{movie.title}</h1>
+            <p className="text-sm text-gray-400 mb-4">
+              {movie.release_date} ・ {movie.original_language?.toUpperCase()} ・ {movie.runtime} phút
+            </p>
 
-          <div className="flex gap-4 flex-wrap mt-8">
-            <button className="flex items-center gap-2 bg-white text-black px-6 py-2 rounded-md hover:bg-gray-200 transition font-semibold">
-              <Play size={20} /> Play
-            </button>
-            <button className="bg-white/10 border border-white/20 text-white px-4 py-2 rounded hover:bg-white/20 transition">
-              <Plus size={20} />
-            </button>
-            <button
-              onClick={toggleFavorite}
-              className={
-                `flex items-center gap-2 px-4 py-2 rounded border transition font-semibold ${
+            <div className="flex flex-wrap gap-2 text-xs mb-4">
+              <span className="bg-yellow-600 px-2 py-1 rounded font-semibold">⭐ {movie.vote_average} ({movie.vote_count})</span>
+              {/* Add other tags if needed */}
+            </div>
+
+            <p className="text-gray-300 leading-relaxed mb-6">{movie.overview}</p>
+
+            {/* Nút hành động */}
+            <div className="flex gap-4 flex-wrap mb-8">
+              <button className="flex items-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-black px-5 py-2 rounded-full font-semibold transition">
+                <Play size={18} /> Xem ngay
+              </button>
+              <button className="flex items-center gap-2 bg-white/10 text-white border border-white/20 px-4 py-2 rounded-md hover:bg-white/20 transition">
+                <Plus size={18} /> Thêm vào
+              </button>
+              <button
+                onClick={toggleFavorite}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md border font-semibold transition ${
                   isFav
-                    ? 'bg-red-500 text-white border-red-500'
-                    : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
-                }`
-              }
-            >
-              <ThumbsUp size={20} />
-              {isFav ? 'Đã thích' : 'Thêm yêu thích'}
-            </button>
-            <button
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-2 text-white px-4 py-2 hover:underline"
-            >
-              <ChevronLeft size={20} /> Back
-            </button>
+                    ? 'bg-red-500 border-red-500 text-white'
+                    : 'bg-white/10 border-white/20 text-white hover:bg-white/20'
+                }`}
+              >
+                <ThumbsUp size={18} />
+                {isFav ? 'Đã thích' : 'Yêu thích'}
+              </button>
+              <button
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-2 text-white px-4 py-2 hover:underline"
+              >
+                <ChevronLeft size={18} /> Quay lại
+              </button>
+            </div>
+
+            {/* Diễn viên */}
+            {paginatedCast.length > 0 && (
+              <div>
+                <h2 className="text-xl font-bold mb-4">Diễn viên</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                  {paginatedCast.map((actor, idx) => (
+                    <div key={idx} className="text-center text-sm">
+                      {actor.profile_path ? (
+                        <img
+                          src={actor.profile_path}
+                          alt={actor.name}
+                          className="w-24 h-36 object-cover rounded-md mx-auto mb-2 shadow"
+                        />
+                      ) : (
+                        <div className="w-24 h-36 bg-gray-700 flex items-center justify-center text-xs mx-auto mb-2 rounded-md">
+                          No Image
+                        </div>
+                      )}
+                      <div className="font-medium">{actor.name}</div>
+                      <div className="text-gray-400 text-xs">vai {actor.character}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-center gap-4 mt-6">
+                  <button
+                    disabled={castPage === 0}
+                    onClick={() => setCastPage(p => Math.max(p - 1, 0))}
+                    className="px-3 py-1 rounded bg-white/10 text-white border border-white/20 hover:bg-white/20 disabled:opacity-40"
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+                  <button
+                    disabled={castPage === totalPages - 1}
+                    onClick={() => setCastPage(p => Math.min(p + 1, totalPages - 1))}
+                    className="px-3 py-1 rounded bg-white/10 text-white border border-white/20 hover:bg-white/20 disabled:opacity-40"
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

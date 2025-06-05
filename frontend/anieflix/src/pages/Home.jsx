@@ -2,6 +2,12 @@ import HeroBanner from '../components/HeroBanner'
 import CategoryChips from '../components/CategoryChips'
 import MovieRow from '../components/MovieRow'
 import CommentSection from '../components/CommentSection'
+import { useEffect, useState } from 'react'
+import axios from '../api/axios'
+import SlideRow from '../components/SlideRow'
+import Banner from '../components/Banner'
+import MoviePopup from '../components/MoviePopup' // 👈 import component popup mới
+
 
 export default function Home() {
   const movies = [
@@ -55,6 +61,14 @@ export default function Home() {
     { id: 1, user: 'An', avatar: 'https://i.pravatar.cc/40?img=1', content: 'Phim hay quá!', time: '1 giờ trước' },
     { id: 2, user: 'Bình', avatar: 'https://i.pravatar.cc/40?img=2', content: 'Mong có phần tiếp theo.', time: '3 giờ trước' }
   ]
+
+//   return (
+//     <div className="pt-14 px-4 sm:px-8 pb-16">
+//       <Banner movies={trending} />
+//       <SlideRow title="🔥 Phim đang hot" items={trending} onItemClick={setSelectedMovie} />
+//       <SlideRow title="⭐ Được người xem yêu thích" items={topRated} onItemClick={setSelectedMovie} />
+//       <SlideRow title="📅 Phim sắp chiếu" items={upcoming} onItemClick={setSelectedMovie} />
+
 
   const stats = {
     topViewer: 'user123',
