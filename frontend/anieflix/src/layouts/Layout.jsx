@@ -1,10 +1,19 @@
 import { Outlet } from 'react-router-dom'
 import Navbar from '../components/Navbar'
+import { useContext } from 'react'
+import { ThemeContext } from '../context/ThemeContext'
 
 export default function Layout() {
-  return (
+  const { theme } = useContext(ThemeContext)
 
-    <div className="bg-gradient-to-br from-yellow-600 to-yellow-900 min-h-screen text-white flex flex-col">
+  return (
+    <div
+      className={`min-h-screen flex flex-col ${
+        theme === 'dark'
+          ? 'bg-gradient-to-br from-yellow-600 to-yellow-900 text-white'
+          : 'bg-white text-gray-900'
+      }`}
+    >
 
       {/* Navbar cố định trên cùng */}
       <Navbar />
