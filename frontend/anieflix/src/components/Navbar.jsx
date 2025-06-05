@@ -24,8 +24,8 @@ export default function Navbar() {
       }
     }
 
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20)
+            ? 'bg-[#0b0c1c]/80 text-white backdrop-blur-md shadow-md'
+            ? 'bg-gradient-to-b from-[#0b0c1c] to-transparent text-white backdrop-blur-sm'
     }
 
     document.addEventListener('mousedown', handleClickOutside)
