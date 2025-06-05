@@ -3,7 +3,11 @@ import CategoryChips from '../components/CategoryChips'
 import MovieRow from '../components/MovieRow'
 import CommentSection from '../components/CommentSection'
 import { useEffect, useState } from 'react'
-import api from '../api/axios'
+import axios from '../api/axios'
+import SlideRow from '../components/SlideRow'
+import Banner from '../components/Banner'
+import MoviePopup from '../components/MoviePopup' // 👈 import component popup mới
+
 
 export default function Home() {
   const [movies, setMovies] = useState([])
@@ -17,6 +21,27 @@ export default function Home() {
         console.error('Failed to load movies', e)
       }
     }
+  ]
+
+  const categories = [
+    { id: 1, name: 'Marvel', color: 'bg-red-600', description: 'Vũ trụ siêu anh hùng Marvel' },
+    { id: 2, name: '4K', color: 'bg-blue-600', description: 'Chất lượng cao 4K sắc nét' },
+    { id: 3, name: 'Sitcom', color: 'bg-green-600', description: 'Hài hước giải trí' },
+    { id: 4, name: 'Xuyên Không', color: 'bg-purple-600', description: 'Phiêu lưu vượt thời gian' }
+  ]
+
+  const comments = [
+    { id: 1, user: 'An', avatar: 'https://i.pravatar.cc/40?img=1', content: 'Phim hay quá!', time: '1 giờ trước' },
+    { id: 2, user: 'Bình', avatar: 'https://i.pravatar.cc/40?img=2', content: 'Mong có phần tiếp theo.', time: '3 giờ trước' }
+  ]
+
+//   return (
+//     <div className="pt-14 px-4 sm:px-8 pb-16">
+//       <Banner movies={trending} />
+//       <SlideRow title="🔥 Phim đang hot" items={trending} onItemClick={setSelectedMovie} />
+//       <SlideRow title="⭐ Được người xem yêu thích" items={topRated} onItemClick={setSelectedMovie} />
+//       <SlideRow title="📅 Phim sắp chiếu" items={upcoming} onItemClick={setSelectedMovie} />
+
 
     fetchMovies()
   }, [])
