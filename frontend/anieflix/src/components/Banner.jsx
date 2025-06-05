@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Play, Plus, ThumbsUp, X, Info } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 export default function Banner({ movies = [] }) {
@@ -75,7 +76,7 @@ export default function Banner({ movies = [] }) {
                 onClick={() => navigate(`/browse/movie/${movie.id}`)}
                 className="bg-white/10 border border-white/20 text-white px-6 py-2 rounded-full hover:bg-white/20 transition"
               >
-                Chi tiết
+                <Info size={20} /> 
               </button>
             </motion.div>
           </div>
