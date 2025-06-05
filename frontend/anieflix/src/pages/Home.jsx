@@ -3,44 +3,21 @@ import CategoryChips from '../components/CategoryChips'
 import MovieRow from '../components/MovieRow'
 import CommentSection from '../components/CommentSection'
 import { useEffect, useState } from 'react'
-import axios from '../api/axios'
-import SlideRow from '../components/SlideRow'
-import Banner from '../components/Banner'
-import MoviePopup from '../components/MoviePopup' // 👈 import component popup mới
+import api from '../api/axios'
+  const [movies, setMovies] = useState([])
 
+  useEffect(() => {
+    async function fetchMovies() {
+      try {
+        const res = await api.get('/movies')
+        setMovies(res.data)
+      } catch (e) {
+        console.error('Failed to load movies', e)
+      }
 
-export default function Home() {
-  const movies = [
-    {
-      id: 1,
-      title: 'The Witcher',
-      imdb: 8.2,
-      genre: 'Fantasy',
-      overview: 'Một thợ săn quái vật cô độc phải tìm cách tồn tại trong thế giới hỗn loạn.',
-      poster_path: 'https://via.placeholder.com/300x450?text=The+Witcher',
-      backdrop: 'https://via.placeholder.com/1280x720?text=The+Witcher',
-      previews: [
-        'https://via.placeholder.com/150x84?text=1',
-        'https://via.placeholder.com/150x84?text=2',
-        'https://via.placeholder.com/150x84?text=3'
-      ]
-    },
-    {
-      id: 2,
-      title: 'Avengers: Endgame',
-      imdb: 8.4,
-      genre: 'Action',
-      overview: 'Các siêu anh hùng tập hợp để chống lại Thanos.',
-      poster_path: 'https://via.placeholder.com/300x450?text=Avengers',
-      backdrop: 'https://via.placeholder.com/1280x720?text=Avengers',
-      previews: [
-        'https://via.placeholder.com/150x84?text=A1',
-        'https://via.placeholder.com/150x84?text=A2',
-        'https://via.placeholder.com/150x84?text=A3'
-      ]
-    },
-    {
-      id: 3,
+    fetchMovies()
+  }, [])
+      {movies.length > 0 && <HeroBanner movie={movies[0]} />}
       title: 'Parasite',
       imdb: 8.6,
       genre: 'Drama',
