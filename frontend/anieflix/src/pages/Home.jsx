@@ -1,45 +1,52 @@
-import { useEffect, useState } from 'react'
-import axios from '../api/axios'
+import HeroBanner from '../components/HeroBanner'
+import CategoryChips from '../components/CategoryChips'
 import MovieRow from '../components/MovieRow'
-import Banner from '../components/Banner'
-import MoviePopup from '../components/MoviePopup' // 👈 import component popup mới
+import CommentSection from '../components/CommentSection'
+import { useEffect, useState } from 'react'
+import api from '../api/axios'
 
 export default function Home() {
-  const [trending, setTrending] = useState([])
-  const [topRated, setTopRated] = useState([])
-  const [upcoming, setUpcoming] = useState([])
-  const [selectedMovie, setSelectedMovie] = useState(null)
+  const [movies, setMovies] = useState([])
 
   useEffect(() => {
-    const fetchAll = async () => {
+    async function fetchMovies() {
       try {
-        const [t, r, u] = await Promise.all([
-          axios.get('/movies?type=trending'),
-          axios.get('/movies?type=top_rated'),
-          axios.get('/movies?type=upcoming')
-        ])
-        setTrending(t.data)
-        setTopRated(r.data)
-        setUpcoming(u.data)
-      } catch (err) {
-        console.error('[❌ API ERROR]', err)
+        const res = await api.get('/movies')
+        setMovies(res.data)
+      } catch (e) {
+        console.error('Failed to load movies', e)
       }
     }
 
-    fetchAll()
+    fetchMovies()
   }, [])
 
-  return (
-    <div className="pt-14 px-4 sm:px-8 pb-16">
-      <Banner movies={trending} />
-      <MovieRow title="🔥 Phim đang hot" movies={trending} onMovieClick={setSelectedMovie} />
-      <MovieRow title="⭐ Được người xem yêu thích" movies={topRated} onMovieClick={setSelectedMovie} />
-      <MovieRow title="📅 Phim sắp chiếu" movies={upcoming} onMovieClick={setSelectedMovie} />
+  const categories = [
+    { id: 1, name: 'Marvel', color: 'bg-red-600', description: 'Vũ trụ siêu anh hùng Marvel' },
+    { id: 2, name: '4K', color: 'bg-blue-600', description: 'Chất lượng cao 4K sắc nét' },
+    { id: 3, name: 'Sitcom', color: 'bg-green-600', description: 'Hài hước giải trí' },
+    { id: 4, name: 'Xuyên Không', color: 'bg-purple-600', description: 'Phiêu lưu vượt thời gian' }
+  ]
 
-      {/* Popup hiển thị khi click vào phim */}
-      {selectedMovie && (
-        <MoviePopup movie={selectedMovie} onClose={() => setSelectedMovie(null)} />
-      )}
+  const comments = [
+    { id: 1, user: 'An', avatar: 'https://i.pravatar.cc/40?img=1', content: 'Phim hay quá!', time: '1 giờ trước' },
+    { id: 2, user: 'Bình', avatar: 'https://i.pravatar.cc/40?img=2', content: 'Mong có phần tiếp theo.', time: '3 giờ trước' }
+  ]
+
+  const stats = {
+    topViewer: 'user123',
+    favMovie: 'Avengers: Endgame',
+    hotMovie: 'The Witcher'
+  }
+
+  return (
+    <div className="space-y-12">
+      {movies.length > 0 && <HeroBanner movie={movies[0]} />}
+      <CategoryChips categories={categories} />
+      <MovieRow title="Phim Hàn Quốc mới" movies={movies} onMovieClick={() => {}} />
+      <MovieRow title="Phim Trung Quốc mới" movies={movies} onMovieClick={() => {}} />
+      <MovieRow title="Phim US-UK mới" movies={movies} onMovieClick={() => {}} />
+      <CommentSection comments={comments} stats={stats} />
     </div>
   )
 }
