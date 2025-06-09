@@ -45,15 +45,19 @@ export default function MovieDetail() {
   if (!movie) return <div className="text-white text-center mt-20">Đang tải phim...</div>
 
   return (
-    <div className="relative min-h-screen pt-14 px-4 sm:px-8 pb-16">
-      {/* Backdrop full screen */}
-      <div
-  className="absolute inset-0 -z-10 bg-cover bg-center"
-  style={{
-    backgroundImage: `url('${movie.backdrop_path || 'https://via.placeholder.com/1280x720?text=No+Backdrop'}')`,
-  }}
-/>
 
+
+
+    <div className="min-h-screen pt-14 px-4 sm:px-8 pb-16">
+
+      <div
+        className="absolute inset-0 -z-10 bg-cover bg-center"
+        style={{
+          backgroundImage: movie.backdrop_path
+            ? `url(${movie.backdrop_path})`
+            : `url('https://via.placeholder.com/1280x720?text=No+Backdrop')`
+        }}
+      />
       {/* Blur dark edges */}
       <div className="absolute inset-0 -z-10 pointer-events-none">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(0,0,0,0)_60%,_rgba(0,0,0,0.6)_100%)]" />
