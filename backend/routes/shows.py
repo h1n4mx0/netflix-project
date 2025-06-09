@@ -27,7 +27,6 @@ def get_shows():
 
 
 
-# ✅ API mới: Lấy chi tiết 1 phim theo ID
 @shows_bp.route('/shows/<int:show_id>', methods=['GET'])
 def get_show_detail(show_id):
     conn = get_db_connection()

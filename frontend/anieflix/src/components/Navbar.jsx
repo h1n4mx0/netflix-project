@@ -46,7 +46,7 @@ export default function Navbar() {
   const handleSearch = (e) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
+      navigate(`/browse/search`)
     }
   }
 
@@ -73,16 +73,8 @@ export default function Navbar() {
             />
           </Link>
           {/* 🔍 Search form */}
-        <form onSubmit={handleSearch} className="hidden md:flex items-center bg-white/10 text-white px-3 py-1 rounded-sm backdrop-blur-sm">
-          <FaSearch className="text-white text-sm mr-2" />
-          <input
-            type="text"
-            placeholder="Tìm phim hoặc chương trình..."
-            className="bg-transparent outline-none text-sm placeholder-gray-350 w-48"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </form>
+          <FaSearch onClick={handleSearch} className="text-white text-sm mr-2 mr-5 cursor-pointer" />
+
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-6 text-white text-sm font-semibold font-sans">
             <Link to="/browse" className="hover:text-gray-400 transition">Trang chủ</Link>
@@ -146,14 +138,14 @@ export default function Navbar() {
               {dropdownOpen && (
                 <div className="absolute right-0 mt-3 w-44 bg-[#141414] text-white rounded-md shadow-lg text-sm overflow-hidden z-50">
                   <Link
-                    to="/browse/profile"
+                    to="/user/profile"
                     onClick={() => setDropdownOpen(false)}
                     className="block px-4 py-3 hover:bg-white/10 transition"
                   >
                     Thông tin cá nhân
                   </Link>
                   <Link
-                    to="/admin/upload"
+                    to="/user/favorites"
                     onClick={() => setDropdownOpen(false)}
                     className="block px-4 py-3 hover:bg-white/10 transition"
                   >

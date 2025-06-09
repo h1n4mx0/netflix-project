@@ -17,7 +17,7 @@ export default function ShowDetail() {
   if (!show) return <div className="text-white p-10">Không tìm thấy chương trình</div>
 
   return (
-    <div className="min-h-screen bg-black text-white px-4 sm:px-10 py-20">
+    <div className="min-h-screen text-white px-4 sm:px-10 py-10">
       <div className="max-w-7xl mx-auto">
         {/* Banner top */}
         <div

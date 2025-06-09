@@ -30,7 +30,7 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="pt-14 px-4 sm:px-8 pb-16">
+    <div className="pt-7 px-4 pb-10">
       <Banner movies={trending} />
       <SlideRow title="🔥 Phim đang hot" items={trending} onItemClick={setSelectedMovie} />
       <SlideRow title="⭐ Được người xem yêu thích" items={topRated} onItemClick={setSelectedMovie} />

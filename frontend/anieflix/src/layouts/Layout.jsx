@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar'
 import { useContext, useEffect } from 'react'
 import { ThemeContext } from '../context/ThemeContext'
 import { isTokenExpired } from '../utils/auth'
-
+import Footer from '../components/Footer'
 export default function Layout() {
   const { theme } = useContext(ThemeContext)
   const navigate = useNavigate()
@@ -37,6 +37,10 @@ export default function Layout() {
       <main className="flex-1 pt-14 container mx-auto px-4 sm:px-8">
         <Outlet />
       </main>
+      {/* Footer cố định dưới cùng */}
+      <Footer />
+
+      {/* Thêm các script hoặc phần tử khác nếu cần */}
     </div>
   )
 }

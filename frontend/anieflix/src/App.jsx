@@ -15,6 +15,7 @@ import LandingPage from './pages/LandingPage'
 import Verify from './pages/Verify'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
+import SearchResults from './pages/SearchResults'
 // Layout
 import Layout from './layouts/Layout'
 import { Toaster } from 'react-hot-toast'
@@ -39,9 +40,12 @@ export default function App() {
           <Route path="shows" element={<ShowPage />} />
           <Route path="shows/:id" element={<ShowDetail />} />
           <Route path="movies" element={<MoviePage />} />
+          <Route path="search" element={<SearchResults />} />
           <Route path="movie/:id" element={<MovieDetail />} />
-          <Route path="profile" element={<Profile />} />
           <Route path="admin/upload" element={<AdminUpload />} />
+        </Route>
+        <Route path="/user" element={<Layout />}>
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>
     </>

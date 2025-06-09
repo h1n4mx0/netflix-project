@@ -73,3 +73,6 @@ def get_movie_detail(movie_id):
     except Exception as e:
         print("[❌ DB ERROR]", e)
         return jsonify({'error': 'Lỗi server hoặc DB'}), 500
+
+
+

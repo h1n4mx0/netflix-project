@@ -105,9 +105,9 @@ export default function ProfilePage() {
                     label="Email"
                     fullWidth
                     value={profile.email}
-                    disabled
+                    onChange={(e) => setProfile({ ...profile, email: e.target.value })}
                     variant="filled"
-                    InputProps={{ style: { backgroundColor: '#2e2e2e', color: 'gray' } }}
+                    InputProps={{ style: { backgroundColor: '#2e2e2e', color: 'white' } }}
                     InputLabelProps={{ style: { color: '#aaa' } }}
                     />
                 </Grid>

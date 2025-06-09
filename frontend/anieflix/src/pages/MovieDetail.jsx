@@ -45,18 +45,25 @@ export default function MovieDetail() {
   if (!movie) return <div className="text-white text-center mt-20">Đang tải phim...</div>
 
   return (
-    <div className="min-h-screen pt-14 px-4 sm:px-8 pb-16">
-      {/* Banner */}
+    <div className="relative min-h-screen pt-14 px-4 sm:px-8 pb-16">
+      {/* Backdrop full screen */}
       <div
-        className="w-full h-[300px] sm:h-[450px] bg-cover bg-center relative"
-        style={{
-          backgroundImage: movie.backdrop_path
-            ? `url(${movie.backdrop_path})`
-            : `url('https://via.placeholder.com/1280x720?text=No+Backdrop')`
-        }}
-      >
+  className="absolute inset-0 -z-10 bg-cover bg-center"
+  style={{
+    backgroundImage: `url('${movie.backdrop_path || 'https://via.placeholder.com/1280x720?text=No+Backdrop'}')`,
+  }}
+/>
+
+      {/* Blur dark edges */}
+      <div className="absolute inset-0 -z-10 pointer-events-none">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(0,0,0,0)_60%,_rgba(0,0,0,0.6)_100%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/60 to-black" />
+      </div>
+
+      {/* Banner */}
+      <div className="w-full h-screen flex items-end relative mb-10">
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
-        <div className="absolute bottom-6 left-6">
+        <div className="relative z-10 p-6">
           <button className="bg-yellow-400 hover:bg-yellow-500 text-black text-lg px-6 py-3 rounded-full font-semibold flex items-center gap-2 shadow-lg transition">
             <Play size={22} /> Xem Ngay
           </button>
@@ -67,7 +74,7 @@ export default function MovieDetail() {
       <div className="max-w-6xl mx-auto px-4 sm:px-8 py-12">
         <div className="flex flex-col md:flex-row gap-10">
           {/* Poster */}
-          <div className="md:w-[220px]">
+          <div className="md:w-[220px] ">
             <img
               src={movie.poster_path || 'https://via.placeholder.com/300x450?text=No+Image'}
               alt={movie.title}

@@ -9,6 +9,7 @@ from routes.register import register_bp
 from routes.verify import verify_bp
 from routes.profile import profile_bp
 from routes.forgotPassword import forgot_password_bp
+from routes.search import search_bp
 
 load_dotenv()
 
@@ -29,6 +30,8 @@ app.register_blueprint(verify_bp, url_prefix='/api')
 app.register_blueprint(movies_bp, url_prefix='/api')
 app.register_blueprint(shows_bp, url_prefix='/api')
 app.register_blueprint(favorites_bp, url_prefix='/api')
+app.register_blueprint(search_bp, url_prefix='/api')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
