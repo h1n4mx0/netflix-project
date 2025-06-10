@@ -17,6 +17,7 @@
     "anieflix": "file:",
     "axios": "^1.9.0",
     "framer-motion": "^12.11.0",
+    "hls.js": "^1.6.5",
     "lucide-react": "^0.510.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
