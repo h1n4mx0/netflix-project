@@ -40,11 +40,20 @@ def stream_show_episode_hls(show_id, episode_id):
                 return jsonify({'error': 'File m3u8 không tìm thấy'}), 404
             
             # Trả về file m3u8
-            response = send_file(
-                m3u8_path,
-                mimetype='application/vnd.apple.mpegurl',
-                as_attachment=False
-            )
+            with open(m3u8_path, 'r', encoding='utf-8') as f:
+                playlist_lines = []
+                for line in f.readlines():
+                    line = line.strip()
+                    if line and not line.startswith('#'):
+                        full_segment = f"/api/stream/show/{show_id}/episode/{episode_id}/{line}"
+                        playlist_lines.append(full_segment)
+                    else:
+                        playlist_lines.append(line)
+
+            playlist_content = "\n".join(playlist_lines)
+
+            # Trả về nội dung playlist đã cập nhật
+            response = Response(playlist_content, mimetype='application/vnd.apple.mpegurl')
             response.headers['Cache-Control'] = 'no-cache'
             return response
             
@@ -72,6 +81,7 @@ def stream_show_segment(show_id, episode_id, segment):
             
             # Lấy thư mục chứa file m3u8
             filepath = result['filepath'].replace('/video/show/', '')
+            print(f"[📂] Filepath: {filepath}")
             episode_dir = os.path.dirname(SHOW_VIDEO_PATH+filepath)
             print(episode_dir)
             # Path đến file .ts
