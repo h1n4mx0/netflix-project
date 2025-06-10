@@ -62,7 +62,7 @@ def stream_show_segment(show_id, episode_id, segment):
             cursor.execute("""
                 SELECT filepath
                 FROM show_episodes
-                WHERE show_id = %s AND episode_number = %s
+                WHERE show_id = %s AND id = %s
             """, (show_id, episode_id))
             
             result = cursor.fetchone()
