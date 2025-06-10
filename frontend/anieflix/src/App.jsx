@@ -16,6 +16,23 @@ import Verify from './pages/Verify'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import SearchResults from './pages/SearchResults'
+import Faq from './pages/Faq'
+import Contact from './pages/Contact'
+import Terms from './pages/Terms'
+import Privacy from './pages/Privacy'
+
+        <Route path="/faq" element={<Layout />}>
+          <Route index element={<Faq />} />
+        </Route>
+        <Route path="/contact" element={<Layout />}>
+          <Route index element={<Contact />} />
+        </Route>
+        <Route path="/terms" element={<Layout />}>
+          <Route index element={<Terms />} />
+        </Route>
+        <Route path="/privacy" element={<Layout />}>
+          <Route index element={<Privacy />} />
+        </Route>
 import WatchShow from './pages/WatchShow'
 // import WatchMovie from './pages/WatchMovie'
 // Layout
