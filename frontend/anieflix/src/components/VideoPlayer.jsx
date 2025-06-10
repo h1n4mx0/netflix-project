@@ -3,9 +3,9 @@ import { Play, Pause, Volume2, VolumeX, Maximize, SkipBack, SkipForward, Setting
 import { useNavigate } from 'react-router-dom'
 import Hls from 'hls.js'
 
-export default function VideoPlayer({ 
-  videoUrl, 
-  title, 
+export default function VideoPlayer({
+  videoUrl,
+  title,
   subtitle,
   poster,
   onNext,
@@ -13,7 +13,8 @@ export default function VideoPlayer({
   hasNext = false,
   hasPrevious = false,
   autoPlay = false,
-  isHLS = false
+  isHLS = false,
+  onClose
 }) {
   const videoRef = useRef(null)
   const containerRef = useRef(null)
@@ -241,7 +242,7 @@ export default function VideoPlayer({
 
         {/* Back button */}
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => (onClose ? onClose() : navigate(-1))}
           className="absolute top-4 right-4 text-white hover:text-gray-300 transition"
         >
           ✕
