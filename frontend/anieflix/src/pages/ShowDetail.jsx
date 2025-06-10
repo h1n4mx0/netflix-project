@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from '../api/axios'
 import { Play, Heart, Plus, Share2, MessageCircle } from 'lucide-react'
@@ -6,14 +6,14 @@ import VideoPlayer from '../components/VideoPlayer'
 
 export default function ShowDetail() {
   const { id } = useParams()
-  const navigate = useNavigate()
   const [show, setShow] = useState(null)
   const [currentEp, setCurrentEp] = useState(null)
   const [activeTab, setActiveTab] = useState('episodes')
   const [suggested, setSuggested] = useState([])
 
+
   useEffect(() => {
-    axios.get(`/api/shows/${id}`)
+    axios.get(`/shows/${id}`)
       .then(res => setShow(res.data))
       .catch(() => setShow(null))
   }, [id])
@@ -26,6 +26,7 @@ export default function ShowDetail() {
       )
       .catch(() => setSuggested([]))
   }, [id])
+
 
   const handleNextEpisode = () => {
     if (!show || !currentEp) return

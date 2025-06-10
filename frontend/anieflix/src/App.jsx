@@ -20,6 +20,8 @@ import Faq from './pages/Faq'
 import Contact from './pages/Contact'
 import Terms from './pages/Terms'
 import Privacy from './pages/Privacy'
+import WatchShow from './pages/WatchShow'
+// import WatchMovie from './pages/WatchMovie'
 // Layout
 import Layout from './layouts/Layout'
 import { Toaster } from 'react-hot-toast'
@@ -56,9 +58,11 @@ export default function App() {
 
           <Route path="shows" element={<ShowPage />} />
           <Route path="shows/:id" element={<ShowDetail />} />
+          <Route path="shows/:showId/watch/:episodeId" element={<WatchShow />} />
           <Route path="movies" element={<MoviePage />} />
-          <Route path="search" element={<SearchResults />} />
           <Route path="movie/:id" element={<MovieDetail />} />
+          {/* <Route path="movies/:id/watch" element={<WatchMovie />} /> */}
+          <Route path="search" element={<SearchResults />} />
           <Route path="admin/upload" element={<AdminUpload />} />
         </Route>
         <Route path="/user" element={<Layout />}>
