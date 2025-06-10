@@ -10,7 +10,7 @@ export default function ShowDetail() {
   const [currentEp, setCurrentEp] = useState(null)
 
   useEffect(() => {
-    axios.get(`/api/shows/${id}`)
+    axios.get(`/shows/${id}`)
       .then(res => setShow(res.data))
       .catch(() => setShow(null))
   }, [id])
