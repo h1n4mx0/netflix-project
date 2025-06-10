@@ -45,9 +45,8 @@ export default function Navbar() {
 
   const handleSearch = (e) => {
     e.preventDefault()
-    if (searchQuery.trim()) {
-      navigate(`/browse/search`)
-    }
+    navigate(`/browse/search`)
+    
   }
 
   return (
