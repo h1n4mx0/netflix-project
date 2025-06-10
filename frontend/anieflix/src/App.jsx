@@ -43,9 +43,9 @@ export default function App() {
           <Route path="shows/:id" element={<ShowDetail />} />
           <Route path="shows/:showId/watch/:episodeId" element={<WatchShow />} />
           <Route path="movies" element={<MoviePage />} />
+          <Route path="movie/:id" element={<MovieDetail />} />
           {/* <Route path="movies/:id/watch" element={<WatchMovie />} /> */}
           <Route path="search" element={<SearchResults />} />
-          <Route path="movie/:id" element={<MovieDetail />} />
           <Route path="admin/upload" element={<AdminUpload />} />
         </Route>
         <Route path="/user" element={<Layout />}>
