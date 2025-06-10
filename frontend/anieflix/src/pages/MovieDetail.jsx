@@ -1,6 +1,6 @@
 // MovieDetail.jsx
 import { useEffect, useState, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import axios from '../api/axios'
 import { Play, Heart, Plus, Share2, MessageCircle } from 'lucide-react'
 
@@ -14,7 +14,6 @@ export default function MovieDetail() {
   const [comments, setComments] = useState([])
   const [commentText, setCommentText] = useState('')
   const commentRef = useRef(null)
-  const navigate = useNavigate()
 
   useEffect(() => {
     axios.get(`/movies/${id}`).then(res => setMovie(res.data)).catch(() => {})
@@ -36,7 +35,9 @@ export default function MovieDetail() {
         await axios.post(`/favorites`, { movie_id: id })
         setIsFav(true)
       }
-    } catch {}
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   const toggleWatchlist = () => {
@@ -112,20 +113,34 @@ export default function MovieDetail() {
 
             <p className="text-gray-300 mb-6 leading-relaxed">{movie.overview}</p>
 
-            <div className="flex gap-4 flex-wrap text-sm mb-6">
-              <button onClick={toggleFavorite} className="flex items-center gap-1 hover:underline text-white">
+            <div className="flex gap-3 flex-wrap text-sm mb-6">
+              <button
+                onClick={toggleFavorite}
+                className="flex items-center gap-1 px-3 py-1 rounded bg-white/10 hover:bg-white/20 transition"
+              >
                 <Heart size={18} /> {isFav ? 'Đã thích' : 'Yêu thích'}
               </button>
-              <button onClick={toggleWatchlist} className="flex items-center gap-1 hover:underline text-white">
+              <button
+                onClick={toggleWatchlist}
+                className="flex items-center gap-1 px-3 py-1 rounded bg-white/10 hover:bg-white/20 transition"
+              >
                 <Plus size={18} /> {inList ? 'Đã thêm' : 'Thêm vào'}
               </button>
-              <button onClick={handleShare} className="flex items-center gap-1 hover:underline text-white">
+              <button
+                onClick={handleShare}
+                className="flex items-center gap-1 px-3 py-1 rounded bg-white/10 hover:bg-white/20 transition"
+              >
                 <Share2 size={18} /> Chia sẻ
               </button>
-              <button onClick={() => commentRef.current?.scrollIntoView({behavior: 'smooth'})} className="flex items-center gap-1 hover:underline text-white">
+              <button
+                onClick={() => commentRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                className="flex items-center gap-1 px-3 py-1 rounded bg-white/10 hover:bg-white/20 transition"
+              >
                 <MessageCircle size={18} /> Bình luận
               </button>
-              {shareCopied && <span className="text-xs text-green-400">Đã sao chép liên kết!</span>}
+              {shareCopied && (
+                <span className="text-xs text-green-400 self-center">Đã sao chép liên kết!</span>
+              )}
             </div>
 
             {/* Tabs */}
@@ -167,15 +182,20 @@ export default function MovieDetail() {
             <textarea
               value={commentText}
               onChange={e => setCommentText(e.target.value)}
-              className="w-full text-black rounded p-2 text-sm"
+              className="w-full bg-[#222] text-white rounded-md p-3 text-sm focus:outline-none"
               rows="3"
               placeholder="Nhập bình luận..."
             />
-            <button type="submit" className="mt-2 bg-yellow-500 px-4 py-1 rounded text-sm text-black">Gửi</button>
+            <button
+              type="submit"
+              className="mt-2 bg-yellow-500 hover:bg-yellow-600 px-4 py-1 rounded text-sm text-black"
+            >
+              Gửi
+            </button>
           </form>
           <div className="space-y-3">
             {comments.map(c => (
-              <div key={c.id} className="bg-white/10 p-2 rounded text-sm">
+              <div key={c.id} className="bg-white/5 border border-white/10 p-3 rounded text-sm">
                 {c.content}
               </div>
             ))}

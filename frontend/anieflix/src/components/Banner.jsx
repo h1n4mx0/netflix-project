@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion as Motion, AnimatePresence } from 'framer-motion'
 import { Play, Plus, ThumbsUp, X, Info } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -21,7 +21,7 @@ export default function Banner({ movies = [] }) {
   return (
     <div className="w-full h-[500px] sm:h-[600px] relative overflow-hidden rounded-xl shadow-xl mb-10">
       <AnimatePresence mode="wait">
-        <motion.div
+        <Motion.div
           key={movie.id}
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -43,25 +43,25 @@ export default function Banner({ movies = [] }) {
 </div>
 
           <div className="relative z-20 h-full flex flex-col justify-end p-6 sm:p-10 max-w-4xl">
-            <motion.h1
+            <Motion.h1
               className="text-3xl sm:text-5xl font-bold text-white drop-shadow mb-4"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
               {movie.title}
-            </motion.h1>
+            </Motion.h1>
 
-            <motion.p
+            <Motion.p
               className="text-sm sm:text-base text-gray-300 line-clamp-3 mb-6 max-w-2xl"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
               {movie.overview || 'Không có mô tả.'}
-            </motion.p>
+            </Motion.p>
 
-            <motion.div
+            <Motion.div
               className="flex space-x-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -78,9 +78,9 @@ export default function Banner({ movies = [] }) {
               >
                 <Info size={20} /> 
               </button>
-            </motion.div>
+            </Motion.div>
           </div>
-        </motion.div>
+        </Motion.div>
       </AnimatePresence>
     </div>
   )
