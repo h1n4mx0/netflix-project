@@ -20,7 +20,7 @@ export default function ShowDetail() {
 
   useEffect(() => {
     axios
-      .get('/api/shows')
+      .get('/shows')
       .then(res =>
         setSuggested(res.data.filter(s => String(s.id) !== String(id)).slice(0, 8))
       )
