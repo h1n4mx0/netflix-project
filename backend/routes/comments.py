@@ -5,8 +5,8 @@ import traceback
 from datetime import datetime
 from flask import Blueprint, jsonify, request
 from db import get_db_connection
-import mysql.connector
-from mysql.connector import Error
+import pymysql
+from pymysql.err import MySQLError as Error
 
 # Setup logging
 logging.basicConfig(level=logging.DEBUG)
@@ -70,7 +70,8 @@ def get_movie_comments(movie_id):
             order_by = 'c.likes_count DESC, c.created_at DESC'
         
         connection = get_db_connection()
-        cursor = connection.cursor(raw=False)  # Ensure tuple format
+        # Use the default Cursor to get tuple results
+        cursor = connection.cursor(cursor=pymysql.cursors.Cursor)
         
         # Get comments query - Simplified without user joins
         query = f"""
