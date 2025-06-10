@@ -1,6 +1,6 @@
 // Updated MovieDetail.jsx - Simplified for Anonymous Comments
 import { useEffect, useState, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import axios from '../api/axios'
 import { Play, Heart, Plus, Share2, MessageCircle, Send, User, Calendar, ThumbsUp, ThumbsDown, Reply } from 'lucide-react'
 
@@ -23,7 +23,6 @@ export default function MovieDetail() {
   const [replyText, setReplyText] = useState('')
   const [expandedReplies, setExpandedReplies] = useState(new Set())
   const commentRef = useRef(null)
-  const navigate = useNavigate()
 
   useEffect(() => {
     fetchMovie()
@@ -95,6 +94,7 @@ export default function MovieDetail() {
     } catch (e) {
       console.error(e)
     }
+
   }
 
   const handleShare = () => {
@@ -272,7 +272,9 @@ export default function MovieDetail() {
                 onClick={() => commentRef.current?.scrollIntoView({ behavior: 'smooth' })}
                 className="flex items-center gap-1 px-3 py-1 rounded bg-white/10 hover:bg-white/20 transition"
               >
+
                 <MessageCircle size={18} /> Bình luận ({comments.length})
+
               </button>
               {shareCopied && (
                 <span className="text-xs text-green-400 self-center">Đã sao chép liên kết!</span>
@@ -399,6 +401,7 @@ export default function MovieDetail() {
                 </div>
                 <p className="text-gray-400 text-lg">Chưa có bình luận nào</p>
                 <p className="text-gray-500 text-sm mt-2">Hãy là người đầu tiên chia sẻ cảm nhận về bộ phim này!</p>
+
               </div>
             ) : (
               comments.map(comment => (

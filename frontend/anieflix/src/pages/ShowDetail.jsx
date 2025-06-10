@@ -167,7 +167,6 @@ export default function ShowDetail() {
               {shareCopied && (
                 <span className="text-xs text-green-400 self-center">Đã sao chép liên kết!</span>
               )}
-
             </div>
 
             {/* Tabs */}
@@ -266,7 +265,6 @@ export default function ShowDetail() {
           <div className="space-y-3">
             {comments.map(c => (
               <div key={c.id} className="bg-white/5 border border-white/10 p-3 rounded text-sm">
-
                 {c.content}
               </div>
             ))}
