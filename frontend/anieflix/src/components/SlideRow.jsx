@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import MovieHoverCard from './MovieHoverCard'
 
 export default function SlideRow({ title, items, onItemClick, viewAllUrl }) {
   const scrollRef = useRef()
@@ -43,8 +44,9 @@ export default function SlideRow({ title, items, onItemClick, viewAllUrl }) {
             <div
               key={item.id}
               onClick={() => onItemClick(item)}
-              className="min-w-[180px] max-w-[200px] cursor-pointer group"
+              className="relative min-w-[180px] max-w-[200px] cursor-pointer group"
             >
+              <MovieHoverCard movie={item} />
               <div className="relative aspect-[16/9] rounded-xl overflow-hidden mb-2">
                 <img
                   src={item.poster_path || 'https://via.placeholder.com/300x450?text=No+Image'}
