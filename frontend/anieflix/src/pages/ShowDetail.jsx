@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import axios from '../api/axios'
 import { Play, Heart, Plus, Share2, MessageCircle } from 'lucide-react'
 
 export default function ShowDetail() {
@@ -30,7 +30,14 @@ export default function ShowDetail() {
         >
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
           <div className="absolute bottom-6 left-6">
-            <button className="bg-yellow-400 hover:bg-yellow-500 text-black text-lg px-6 py-3 rounded-full font-semibold flex items-center gap-2 shadow-lg transition">
+            <button
+              onClick={() => {
+                if (show.episodes?.length) {
+                  navigate(`/shows/${id}/watch/${show.episodes[0].id}`)
+                }
+              }}
+              className="bg-yellow-400 hover:bg-yellow-500 text-black text-lg px-6 py-3 rounded-full font-semibold flex items-center gap-2 shadow-lg transition"
+            >
               <Play size={22} /> Xem Ngay
             </button>
           </div>
