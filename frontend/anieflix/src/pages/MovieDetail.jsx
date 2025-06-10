@@ -1,6 +1,6 @@
 // MovieDetail.jsx
 import { useEffect, useState, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import axios from '../api/axios'
 import { Play, Heart, Plus, Share2, MessageCircle } from 'lucide-react'
 
@@ -14,6 +14,8 @@ export default function MovieDetail() {
   const [comments, setComments] = useState([])
   const [commentText, setCommentText] = useState('')
   const commentRef = useRef(null)
+  const navigate = useNavigate()
+
 
   useEffect(() => {
     axios.get(`/movies/${id}`).then(res => setMovie(res.data)).catch(() => {})
@@ -38,6 +40,35 @@ export default function MovieDetail() {
     } catch (e) {
       console.error(e)
     }
+  }
+
+  const toggleWatchlist = () => {
+    const list = JSON.parse(localStorage.getItem('watchlist') || '[]')
+    if (list.includes(Number(id))) {
+      const newList = list.filter(m => m !== Number(id))
+      localStorage.setItem('watchlist', JSON.stringify(newList))
+      setInList(false)
+    } else {
+      const newList = [...list, Number(id)]
+      localStorage.setItem('watchlist', JSON.stringify(newList))
+      setInList(true)
+    }
+  }
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href)
+    setShareCopied(true)
+    setTimeout(() => setShareCopied(false), 2000)
+  }
+
+  const handleCommentSubmit = e => {
+    e.preventDefault()
+    if (!commentText.trim()) return
+    const newComment = { id: Date.now(), content: commentText.trim() }
+    const newComments = [...comments, newComment]
+    setComments(newComments)
+    localStorage.setItem(`movieComments-${id}`, JSON.stringify(newComments))
+    setCommentText('')
   }
 
   const toggleWatchlist = () => {
@@ -141,6 +172,7 @@ export default function MovieDetail() {
               {shareCopied && (
                 <span className="text-xs text-green-400 self-center">Đã sao chép liên kết!</span>
               )}
+
             </div>
 
             {/* Tabs */}
@@ -196,6 +228,7 @@ export default function MovieDetail() {
           <div className="space-y-3">
             {comments.map(c => (
               <div key={c.id} className="bg-white/5 border border-white/10 p-3 rounded text-sm">
+
                 {c.content}
               </div>
             ))}

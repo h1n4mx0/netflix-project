@@ -10,6 +10,7 @@ export default function MovieHoverCard({ movie }) {
         <p className="text-xs text-gray-300 mt-1 line-clamp-3">{movie.overview}</p>
       )}
       <div className="absolute bottom-0 left-1/2 translate-y-1/2 -translate-x-1/2 w-3 h-3 bg-[#111] rotate-45 border-l border-b border-white/10" />
+
     </div>
   )
 }
