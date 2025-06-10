@@ -9,7 +9,6 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
   const dropdownRef = useRef()
   const navigate = useNavigate()
   const { theme, toggleTheme } = useContext(ThemeContext)

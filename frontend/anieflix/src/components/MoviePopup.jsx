@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion as Motion } from 'framer-motion'
 import { Play, Plus, ThumbsUp, X, Info } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -28,7 +28,7 @@ export default function MoviePopup({ movie, onClose }) {
       id="popup-background"
       className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
     >
-      <motion.div
+      <Motion.div
         className="bg-[#141414] text-white rounded-lg overflow-hidden max-w-4xl w-full relative shadow-lg"
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -81,7 +81,7 @@ export default function MoviePopup({ movie, onClose }) {
             </button>
           </div>
         </div>
-      </motion.div>
+      </Motion.div>
     </div>
   )
 }
