@@ -38,7 +38,6 @@ def stream_show_episode_hls(show_id, episode_id):
             if not os.path.exists(m3u8_path):
                 print(f"[❌] M3U8 file not found: {m3u8_path}")
                 return jsonify({'error': 'File m3u8 không tìm thấy'}), 404
-           
             with open(m3u8_path, 'r', encoding='utf-8') as f:
                 playlist_lines = []
                 for line in f.readlines():

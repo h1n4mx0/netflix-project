@@ -48,14 +48,14 @@ export default function MovieDetail() {
 
 
 
-    <div className="min-h-screen pt-14 px-4 sm:px-8 pb-16">
+    <div className="min-h-screen pt-14 px-4 sm:px-8 pb-16 relative">
 
       <div
         className="absolute inset-0 -z-10 bg-cover bg-center"
         style={{
-          backgroundImage: movie.backdrop_path
-            ? `url(${movie.backdrop_path})`
-            : `url('https://via.placeholder.com/1280x720?text=No+Backdrop')`
+          backgroundImage: `url('${
+            movie.backdrop_path || 'https://via.placeholder.com/1280x720?text=No+Backdrop'
+          }')`
         }}
       />
       {/* Blur dark edges */}

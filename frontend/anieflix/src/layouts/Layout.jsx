@@ -4,6 +4,7 @@ import { useContext, useEffect } from 'react'
 import { ThemeContext } from '../context/ThemeContext'
 import { isTokenExpired } from '../utils/auth'
 import Footer from '../components/Footer'
+import SidebarAds from '../components/SidebarAds'
 export default function Layout() {
   const { theme } = useContext(ThemeContext)
   const navigate = useNavigate()
@@ -32,6 +33,9 @@ export default function Layout() {
     >
       {/* Navbar cố định trên cùng */}
       <Navbar />
+
+      {/* Quảng cáo bên trái và phải */}
+      <SidebarAds />
 
       {/* Phần nội dung chính của mỗi trang */}
       <main className="flex-1 pt-14 container mx-auto px-4 sm:px-8">
