@@ -1,18 +1,39 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from '../api/axios'
 import { Play, Heart, Plus, Share2, MessageCircle } from 'lucide-react'
+import VideoPlayer from '../components/VideoPlayer'
 
 export default function ShowDetail() {
   const { id } = useParams()
-  const navigate = useNavigate()
   const [show, setShow] = useState(null)
+  const [currentEp, setCurrentEp] = useState(null)
 
   useEffect(() => {
     axios.get(`/api/shows/${id}`)
       .then(res => setShow(res.data))
       .catch(() => setShow(null))
   }, [id])
+
+  const handleNextEpisode = () => {
+    if (!show || !currentEp) return
+    const idx = show.episodes.findIndex(ep => ep.id === currentEp.id)
+    if (idx < show.episodes.length - 1) {
+      setCurrentEp(show.episodes[idx + 1])
+    }
+  }
+
+  const handlePrevEpisode = () => {
+    if (!show || !currentEp) return
+    const idx = show.episodes.findIndex(ep => ep.id === currentEp.id)
+    if (idx > 0) {
+      setCurrentEp(show.episodes[idx - 1])
+    }
+  }
+
+  const currentIndex = currentEp ? show?.episodes.findIndex(ep => ep.id === currentEp.id) : -1
+  const hasNext = currentIndex >= 0 && currentIndex < (show?.episodes.length || 0) - 1
+  const hasPrevious = currentIndex > 0
 
   if (!show) return <div className="text-white p-10">Không tìm thấy chương trình</div>
 
@@ -33,7 +54,7 @@ export default function ShowDetail() {
             <button
               onClick={() => {
                 if (show.episodes?.length) {
-                  navigate(`/shows/${id}/watch/${show.episodes[0].id}`)
+                  setCurrentEp(show.episodes[0])
                 }
               }}
               className="bg-yellow-400 hover:bg-yellow-500 text-black text-lg px-6 py-3 rounded-full font-semibold flex items-center gap-2 shadow-lg transition"
@@ -97,7 +118,7 @@ export default function ShowDetail() {
               {show.episodes.map(ep => (
                 <button
                   key={ep.id}
-                  onClick={() => navigate(`/shows/${id}/watch/${ep.id}`)}
+                  onClick={() => setCurrentEp(ep)}
                   className="bg-[#1e1e1e] hover:bg-white/10 transition text-white rounded-md overflow-hidden flex flex-col"
                 >
                   {ep.thumbnail_url ? (
@@ -118,6 +139,23 @@ export default function ShowDetail() {
           </div>
         </div>
       </div>
+      {currentEp && (
+        <div className="fixed inset-0 bg-black z-50">
+          <VideoPlayer
+            videoUrl={`/api/stream/show/${id}/episode/${currentEp.id}`}
+            title={show.title}
+            subtitle={currentEp.title}
+            poster={currentEp.thumbnail_url ? `/api/static/show-thumbnail/${currentEp.thumbnail_url}` : show.show_poster}
+            onNext={hasNext ? handleNextEpisode : null}
+            onPrevious={hasPrevious ? handlePrevEpisode : null}
+            hasNext={hasNext}
+            hasPrevious={hasPrevious}
+            autoPlay={true}
+            isHLS={true}
+            onClose={() => setCurrentEp(null)}
+          />
+        </div>
+      )}
     </div>
   )
 }
