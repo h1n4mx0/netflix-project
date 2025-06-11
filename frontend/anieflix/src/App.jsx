@@ -8,9 +8,7 @@ import MoviePage from './pages/MoviePage'
 import MovieDetail from './pages/MovieDetail'
 import ShowPage from './pages/ShowPage'
 import ShowDetail from './pages/ShowDetail'
-import Settings from './pages/Settings'
 import Profile from './pages/Profile'
-import AdminUpload from './pages/AdminUpload'
 import LandingPage from './pages/LandingPage'
 import Verify from './pages/Verify'
 import ForgotPassword from './pages/ForgotPassword'
@@ -21,6 +19,9 @@ import Contact from './pages/Contact'
 import Terms from './pages/Terms'
 import Privacy from './pages/Privacy'
 import WatchShow from './pages/WatchShow'
+import Favorites from './pages/Favorites'
+import AdminUpload from './pages/AdminUpload'
+import AdminDashboard from './pages/AdminDashboard'
 // import WatchMovie from './pages/WatchMovie'
 // Layout
 import Layout from './layouts/Layout'
@@ -62,10 +63,15 @@ export default function App() {
           <Route path="movies" element={<MoviePage />} />
           <Route path="movie/:id" element={<MovieDetail />} />
           <Route path="search" element={<SearchResults />} />
-          <Route path="admin/upload" element={<AdminUpload />} />
         </Route>
+        <Route path="/admin" element={<Layout />}>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="upload" element={<AdminUpload />} />
+        </Route>
+    
         <Route path="/user" element={<Layout />}>
           <Route path="profile" element={<Profile />} />
+          <Route path="favorites" element={<Favorites />} />
         </Route>
       </Routes>
     </>

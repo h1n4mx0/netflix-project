@@ -1,8 +1,9 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useEffect, useState, useRef } from 'react'
 import axios from '../api/axios'
-import { Play, Heart, Plus, Share2, MessageCircle } from 'lucide-react'
+import { Play, Heart, Plus, Share2, MessageCircle, Send, User, Calendar, ThumbsUp, ThumbsDown, Reply } from 'lucide-react'
 import VideoPlayer from '../components/VideoPlayer'
+import { Snackbar, Alert } from '@mui/material'
 
 export default function ShowDetail() {
   const { id } = useParams()
@@ -14,6 +15,8 @@ export default function ShowDetail() {
   const [shareCopied, setShareCopied] = useState(false)
   const [comments, setComments] = useState([])
   const [commentText, setCommentText] = useState('')
+  const [toast, setToast] = useState({ open: false, message: '', severity: 'success' })
+  const [isFav, setIsFav] = useState(false)
   const commentRef = useRef(null)
   const navigate = useNavigate()
 
@@ -45,7 +48,23 @@ export default function ShowDetail() {
       setCurrentEp(show.episodes[idx + 1])
     }
   }
+  const toggleFavorite = async () => {
+    try {
+      if (isFav) {
+        await axios.delete(`/favorites/${id}`)
+        setIsFav(false)
+      } else {
+        await axios.post(`/favorites`, { 
+          item_id: id,
+          item_type: 'show'
+        })
+        setIsFav(true)
+      }
+    } catch (e) {
+      console.error(e)
+    }
 
+  }
   const handlePrevEpisode = () => {
     if (!show || !currentEp) return
     const idx = show.episodes.findIndex(ep => ep.id === currentEp.id)
@@ -69,8 +88,7 @@ export default function ShowDetail() {
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href)
-    setShareCopied(true)
-    setTimeout(() => setShareCopied(false), 2000)
+    setToast({ open: true, message: 'Đã sao chép liên kết!', severity: 'success' })
   }
 
   const handleCommentSubmit = e => {
@@ -143,15 +161,26 @@ export default function ShowDetail() {
             <p className="text-gray-300 mb-6 leading-relaxed">{show.description}</p>
 
             <div className="flex gap-3 flex-wrap text-sm mb-6">
-              <button className="flex items-center gap-1 px-3 py-1 rounded bg-white/10 hover:bg-white/20 transition">
-                <Heart size={18} /> Yêu thích
+              <button                 
+                onClick={toggleFavorite}                 
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 ${
+                  isFav 
+                    ? 'bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-400 border border-red-500/30' 
+                    : 'bg-white/10 text-white border border-white/20 hover:bg-white/20'
+                }`}               
+              >                 
+                <Heart 
+                  size={18} 
+                  className={`transition-all duration-200 ${isFav ? 'fill-current text-red-500' : ''}`} 
+                /> 
+                {isFav ? 'Đã thích' : 'Yêu thích'}               
               </button>
-              <button
+              {/* <button
                 onClick={toggleWatchlist}
                 className="flex items-center gap-1 px-3 py-1 rounded bg-white/10 hover:bg-white/20 transition"
               >
                 <Plus size={18} /> {inList ? 'Đã thêm' : 'Thêm vào'}
-              </button>
+              </button> */}
               <button
                 onClick={handleShare}
                 className="flex items-center gap-1 px-3 py-1 rounded bg-white/10 hover:bg-white/20 transition"
@@ -164,9 +193,6 @@ export default function ShowDetail() {
               >
                 <MessageCircle size={18} /> Bình luận
               </button>
-              {shareCopied && (
-                <span className="text-xs text-green-400 self-center">Đã sao chép liên kết!</span>
-              )}
             </div>
 
             {/* Tabs */}
@@ -288,6 +314,20 @@ export default function ShowDetail() {
           />
         </div>
       )}
+      <Snackbar
+        open={toast.open}
+        autoHideDuration={3000}
+        onClose={() => setToast({ ...toast, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert 
+          onClose={() => setToast({ ...toast, open: false })} 
+          severity={toast.severity}
+          variant="filled"
+        >
+          {toast.message}
+        </Alert>
+      </Snackbar>
     </div>
   )
 }

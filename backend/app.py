@@ -12,6 +12,7 @@ from routes.forgotPassword import forgot_password_bp
 from routes.search import search_bp
 from routes.stream import stream_bp
 from routes.comments import comments_bp
+from routes.admin import admin_bp
 # Thêm vào app.py
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -37,6 +38,7 @@ app.register_blueprint(favorites_bp, url_prefix='/api')
 app.register_blueprint(search_bp, url_prefix='/api')
 app.register_blueprint(stream_bp, url_prefix='/api')
 app.register_blueprint(comments_bp, url_prefix='/api')
+app.register_blueprint(admin_bp, url_prefix='/api')
 
 
 if __name__ == '__main__':

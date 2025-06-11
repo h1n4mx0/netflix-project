@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from '../api/axios'
 import { Play, Heart, Plus, Share2, MessageCircle, Send, User, Calendar, ThumbsUp, ThumbsDown, Reply } from 'lucide-react'
+import { Snackbar, Alert } from '@mui/material'
 
 export default function MovieDetail() {
   const { id } = useParams()
@@ -22,6 +23,7 @@ export default function MovieDetail() {
   const [replyingTo, setReplyingTo] = useState(null)
   const [replyText, setReplyText] = useState('')
   const [expandedReplies, setExpandedReplies] = useState(new Set())
+  const [toast, setToast] = useState({ open: false, message: '', severity: 'success' })
   const commentRef = useRef(null)
 
   useEffect(() => {
@@ -51,10 +53,12 @@ export default function MovieDetail() {
 
   const fetchFavorites = async () => {
     try {
-      const res = await axios.get(`/favorites`)
-      setIsFav(res.data.includes(Number(id)))
+      const res = await axios.get(`/favorites/check/${id}?type=movie`)
+      console.log('Favorites response:', res.data.is_favorite)
+      setIsFav(res.data.is_favorite)
     } catch (error) {
       console.error('Error fetching favorites:', error)
+      setIsFav(false)
     }
   }
 
@@ -85,22 +89,38 @@ export default function MovieDetail() {
   const toggleFavorite = async () => {
     try {
       if (isFav) {
-        await axios.delete(`/favorites/${id}`)
+        await axios.delete(`/favorites/${id}?type=movie`)
         setIsFav(false)
+        setToast({ 
+          open: true, 
+          message: 'Đã xóa khỏi danh sách yêu thích', 
+          severity: 'success' 
+        })
       } else {
-        await axios.post(`/favorites`, { movie_id: id })
+        await axios.post(`/favorites`, { 
+          item_id: id,
+          item_type: 'movie'
+        })
         setIsFav(true)
+        setToast({ 
+          open: true, 
+          message: 'Đã thêm vào danh sách yêu thích', 
+          severity: 'success' 
+        })
       }
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      console.error('Error toggling favorite:', error)
+      setToast({ 
+        open: true, 
+        message: 'Có lỗi xảy ra', 
+        severity: 'error' 
+      })
     }
-
   }
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href)
-    setShareCopied(true)
-    setTimeout(() => setShareCopied(false), 2000)
+    setToast({ open: true, message: 'Đã sao chép liên kết!', severity: 'success' })
   }
 
   const handleCommentSubmit = async (e) => {
@@ -250,18 +270,26 @@ export default function MovieDetail() {
             <p className="text-gray-300 mb-6 leading-relaxed">{movie.overview}</p>
 
             <div className="flex gap-3 flex-wrap text-sm mb-6">
-              <button
-                onClick={toggleFavorite}
-                className="flex items-center gap-1 px-3 py-1 rounded bg-white/10 hover:bg-white/20 transition"
-              >
-                <Heart size={18} /> {isFav ? 'Đã thích' : 'Yêu thích'}
+              <button                 
+                onClick={toggleFavorite}                 
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 ${
+                  isFav 
+                    ? 'bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-400 border border-red-500/30' 
+                    : 'bg-white/10 text-white border border-white/20 hover:bg-white/20'
+                }`}               
+              >                 
+                <Heart 
+                  size={18} 
+                  className={`transition-all duration-200 ${isFav ? 'fill-current text-red-500' : ''}`} 
+                /> 
+                {isFav ? 'Đã thích' : 'Yêu thích'}               
               </button>
-              <button
+              {/* <button
                 onClick={toggleWatchlist}
                 className="flex items-center gap-1 px-3 py-1 rounded bg-white/10 hover:bg-white/20 transition"
               >
                 <Plus size={18} /> {inList ? 'Đã thêm' : 'Thêm vào'}
-              </button>
+              </button> */}
               <button
                 onClick={handleShare}
                 className="flex items-center gap-1 px-3 py-1 rounded bg-white/10 hover:bg-white/20 transition"
@@ -276,9 +304,6 @@ export default function MovieDetail() {
                 <MessageCircle size={18} /> Bình luận ({comments.length})
 
               </button>
-              {shareCopied && (
-                <span className="text-xs text-green-400 self-center">Đã sao chép liên kết!</span>
-              )}
             </div>
 
             {/* Tabs */}
@@ -593,6 +618,20 @@ export default function MovieDetail() {
           )}
         </div>
       </div>
+      <Snackbar
+        open={toast.open}
+        autoHideDuration={3000}
+        onClose={() => setToast({ ...toast, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert 
+          onClose={() => setToast({ ...toast, open: false })} 
+          severity={toast.severity}
+          variant="filled"
+        >
+          {toast.message}
+        </Alert>
+      </Snackbar>
     </div>
   )
 }

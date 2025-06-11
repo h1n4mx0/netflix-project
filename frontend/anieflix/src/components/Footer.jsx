@@ -52,7 +52,7 @@ export default function Footer() {
 
       {/* Bottom line */}
       <div className="mt-10 border-t border-gray-700 pt-4 text-center text-sm text-gray-500">
-        © {new Date().getFullYear()} Anieflix. Mọi quyền được bảo lưu.
+        © {new Date().getFullYear()} Anieflix. Thuộc quyền sở hữu của h1n4m.
       </div>
     </footer>
   );
