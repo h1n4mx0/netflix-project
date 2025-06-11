@@ -6,9 +6,110 @@ import mimetypes
 stream_bp = Blueprint('stream', __name__)
 
 # Đường dẫn lưu video
-MOVIE_VIDEO_PATH = os.getenv("MOVIE_VIDEO_PATH", "C:/Users/PC/Desktop/netflix-project/video/movies")
+MOVIE_VIDEO_PATH = os.getenv("MOVIE_VIDEO_PATH", "C:/Users/PC/Desktop/netflix-project/video/movie/")
 SHOW_VIDEO_PATH = os.getenv("SHOW_VIDEO_PATH", "C:/Users/PC/Desktop/netflix-project/video/show/")
 
+# Thêm vào đầu file stream.py
+
+@stream_bp.route('/stream/movie/<int:movie_id>')
+def stream_movie_hls(movie_id):
+    """Stream HLS playlist (m3u8) cho movie"""
+    conn = get_db_connection()
+    
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                SELECT video_file, title
+                FROM movies
+                WHERE id = %s
+            """, (movie_id,))
+            
+            result = cursor.fetchone()
+            
+            if not result or not result.get('video_file'):
+                return jsonify({'error': 'Movie không tồn tại hoặc chưa có video'}), 404
+            
+            # video_file chứa relative path đến playlist: "movie_name/movie_name.m3u8"
+            playlist_relative_path = result['video_file']
+            playlist_full_path = os.path.join(MOVIE_VIDEO_PATH, playlist_relative_path)
+            
+            print(f"[DEBUG] Movie HLS playlist path: {playlist_full_path}")
+            
+            if not os.path.exists(playlist_full_path):
+                print(f"[❌] M3U8 file not found: {playlist_full_path}")
+                return jsonify({'error': 'File m3u8 không tìm thấy'}), 404
+            
+            # Đọc và cập nhật playlist với URLs đầy đủ
+            with open(playlist_full_path, 'r', encoding='utf-8') as f:
+                playlist_lines = []
+                for line in f.readlines():
+                    line = line.strip()
+                    if line and not line.startswith('#'):
+                        # Cập nhật segment URLs
+                        full_segment_url = f"/api/stream/movie/{movie_id}/{line}"
+                        playlist_lines.append(full_segment_url)
+                    else:
+                        playlist_lines.append(line)
+
+            playlist_content = "\n".join(playlist_lines)
+
+            # Trả về nội dung playlist đã cập nhật
+            response = Response(playlist_content, mimetype='application/vnd.apple.mpegurl')
+            response.headers['Cache-Control'] = 'no-cache'
+            return response
+            
+    except Exception as e:
+        print(f"[❌ Stream Movie Error] {e}")
+        return jsonify({'error': 'Lỗi khi stream video'}), 500
+    finally:
+        if conn:
+            conn.close()
+
+@stream_bp.route('/stream/movie/<int:movie_id>/<path:segment>')
+def stream_movie_segment(movie_id, segment):
+    """Stream các file .ts segments cho movie HLS"""
+    conn = get_db_connection()
+    
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                SELECT video_file
+                FROM movies
+                WHERE id = %s
+            """, (movie_id,))
+            
+            result = cursor.fetchone()
+            
+            if not result:
+                return jsonify({'error': 'Movie không tồn tại'}), 404
+            
+            # Lấy thư mục chứa video files
+            video_relative_path = result['video_file']
+            video_dir = os.path.dirname(os.path.join(MOVIE_VIDEO_PATH, video_relative_path))
+            
+            print(f"[📂] Movie video directory: {video_dir}")
+            
+            # Path đến file .ts
+            ts_path = os.path.join(video_dir, segment)
+            
+            if not os.path.exists(ts_path):
+                print(f"[❌] TS segment not found: {ts_path}")
+                return jsonify({'error': 'Segment không tìm thấy'}), 404
+            
+            # Trả về file .ts
+            return send_file(
+                ts_path,
+                mimetype='video/mp2t',
+                as_attachment=False,
+                conditional=True
+            )
+            
+    except Exception as e:
+        print(f"[❌ Stream Movie Segment Error] {e}")
+        return jsonify({'error': 'Lỗi khi stream segment'}), 500
+    finally:
+        if conn:
+            conn.close()
 
 @stream_bp.route('/stream/show/<int:show_id>/episode/<int:episode_id>')
 def stream_show_episode_hls(show_id, episode_id):

@@ -1,26 +1,23 @@
-# routes/admin.py - Updated with admin middleware
 import os
 import uuid
+import json
+import logging
+import subprocess
+import shutil
 from flask import Blueprint, request, jsonify
 from werkzeug.utils import secure_filename
 from db import get_db_connection
-from utils.utils import get_user_id_from_token
 from utils.check_admin import admin_required
-import json
 from PIL import Image
-import logging
 
 admin_bp = Blueprint('admin', __name__)
 
-# Configuration
-UPLOAD_FOLDER = 'static'
-ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-ALLOWED_VIDEO_EXTENSIONS = {'mp4', 'avi', 'mkv', 'mov', 'wmv', 'flv'}
-MAX_FILE_SIZE = 16 * 1024 * 1024 * 1024  # 16GB
-
-def allowed_file(filename, allowed_extensions):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in allowed_extensions
+# Video processing configuration
+MOVIE_VIDEO_PATH = os.getenv("MOVIE_VIDEO_PATH", "C:/Users/PC/Desktop/netflix-project/video/movie")
+ALLOWED_VIDEO_EXTENSIONS = {'.mp4', '.avi', '.mov', '.mkv', '.flv', '.wmv', '.webm'}
+ALLOWED_IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
+UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "C:/Users/PC/Desktop/netflix-project/backend/static")
+FFMPEG_PATH = "ffmpeg"  # Đảm bảo ffmpeg đã được thêm vào PATH
 
 def save_image(file, folder):
     """Save and optimize image file"""
@@ -67,35 +64,131 @@ def save_image(file, folder):
                 os.remove(file_path)
             return None
     return None
+def allowed_file(filename, allowed_extensions):
+    """Check if file extension is allowed"""
+    return '.' in filename and \
+           os.path.splitext(filename)[1].lower() in allowed_extensions
 
-def save_video(file):
-    """Save video file"""
-    print(f"[DEBUG] save_video called with file={file.filename}")
-    if file and allowed_file(file.filename, ALLOWED_VIDEO_EXTENSIONS):
-        # Generate unique filename
-        filename = secure_filename(file.filename)
-        name, ext = os.path.splitext(filename)
-        unique_filename = f"{name}_{uuid.uuid4().hex[:8]}{ext}"
+def clean_filename(filename):
+    """Clean filename for use as folder name"""
+    # Remove extension and clean special characters
+    name = os.path.splitext(filename)[0]
+    # Replace special characters with underscore
+    import re
+    clean_name = re.sub(r'[^\w\s-]', '_', name)
+    # Replace spaces with underscore
+    clean_name = re.sub(r'\s+', '_', clean_name)
+    return clean_name
+
+def process_video_to_hls(input_file_path, output_dir, base_name):
+    """Convert video to HLS format using FFmpeg"""
+    try:
+        print(f"[DEBUG] Starting HLS conversion for: {input_file_path}")
         
-        # Create directory if it doesn't exist
-        save_path = os.path.join(UPLOAD_FOLDER, 'videos')
-        os.makedirs(save_path, exist_ok=True)
+        # Create output directory
+        os.makedirs(output_dir, exist_ok=True)
         
-        # Full file path
-        file_path = os.path.join(save_path, unique_filename)
+        # Output files
+        playlist_file = os.path.join(output_dir, f"{base_name}.m3u8")
         
-        try:
-            file.save(file_path)
-            return unique_filename
-        except Exception as e:
-            logging.error(f"Error saving video: {e}")
+        # FFmpeg command for HLS conversion
+        ffmpeg_cmd = [
+            FFMPEG_PATH,
+            "-i", input_file_path,
+            "-profile:v", "baseline",
+            "-level", "3.0", 
+            "-start_number", "0",
+            "-hls_time", "10",
+            "-hls_list_size", "0",
+            "-f", "hls",
+            "-hls_segment_filename", os.path.join(output_dir, f"{base_name}_%03d.ts"),
+            playlist_file
+        ]
+        
+        print(f"[DEBUG] FFmpeg command: {' '.join(ffmpeg_cmd)}")
+        
+        # Run FFmpeg
+        result = subprocess.run(
+            ffmpeg_cmd,
+            capture_output=True,
+            text=True,
+            timeout=3600  # 1 hour timeout
+        )
+        
+        if result.returncode == 0:
+            print(f"[DEBUG] HLS conversion successful. Playlist: {playlist_file}")
+            return playlist_file
+        else:
+            print(f"[DEBUG] FFmpeg error: {result.stderr}")
+            logging.error(f"FFmpeg conversion failed: {result.stderr}")
             return None
-    return None
+            
+    except subprocess.TimeoutExpired:
+        print("[DEBUG] FFmpeg conversion timed out")
+        logging.error("FFmpeg conversion timed out")
+        return None
+    except Exception as e:
+        print(f"[DEBUG] Exception during video processing: {e}")
+        logging.error(f"Video processing error: {e}")
+        return None
+
+def save_and_process_video(file, movie_title):
+    """Save video file and convert to HLS"""
+    print(f"[DEBUG] save_and_process_video called with file={file.filename}")
+    
+    if not file or not allowed_file(file.filename, ALLOWED_VIDEO_EXTENSIONS):
+        return None, None
+    
+    try:
+        # Create movie folder name from title
+        clean_title = clean_filename(movie_title) if movie_title else clean_filename(file.filename)
+        movie_folder = os.path.join(MOVIE_VIDEO_PATH, clean_title)
+        
+        # Create temporary file for processing
+        temp_dir = os.path.join(MOVIE_VIDEO_PATH, "temp")
+        os.makedirs(temp_dir, exist_ok=True)
+        
+        # Save original file temporarily
+        original_filename = secure_filename(file.filename)
+        temp_file_path = os.path.join(temp_dir, f"temp_{uuid.uuid4().hex[:8]}_{original_filename}")
+        
+        print(f"[DEBUG] Saving temp file to: {temp_file_path}")
+        file.save(temp_file_path)
+        
+        # Generate HLS base name
+        hls_base_name = clean_filename(movie_title) if movie_title else "movie"
+        
+        # Process video to HLS
+        print(f"[DEBUG] Converting to HLS in folder: {movie_folder}")
+        playlist_path = process_video_to_hls(temp_file_path, movie_folder, hls_base_name)
+        
+        if playlist_path:
+            # Calculate relative path for database storage
+            relative_playlist_path = os.path.relpath(playlist_path, MOVIE_VIDEO_PATH)
+            relative_playlist_path = relative_playlist_path.replace("\\", "/")  # Use forward slashes
+            
+            print(f"[DEBUG] HLS conversion successful. Relative path: {relative_playlist_path}")
+            
+            # Clean up temp file
+            if os.path.exists(temp_file_path):
+                os.remove(temp_file_path)
+            
+            return relative_playlist_path, movie_folder
+        else:
+            # Clean up temp file on failure
+            if os.path.exists(temp_file_path):
+                os.remove(temp_file_path)
+            return None, None
+            
+    except Exception as e:
+        print(f"[DEBUG] Error in save_and_process_video: {e}")
+        logging.error(f"Error processing video: {e}")
+        return None, None
 
 @admin_bp.route('/admin/upload-movie', methods=['POST'])
 @admin_required
 def upload_movie():
-    """Upload a new movie"""
+    """Upload a new movie with HLS video processing"""
     print("[DEBUG] upload_movie endpoint called")
     try:
         # Get form data
@@ -124,7 +217,8 @@ def upload_movie():
         # Handle file uploads
         poster_filename = None
         backdrop_filename = None
-        video_filename = None
+        video_file_path = None
+        video_folder = None
         
         # Save poster (required)
         if 'poster' in request.files:
@@ -145,12 +239,16 @@ def upload_movie():
             if backdrop_file.filename:
                 backdrop_filename = save_image(backdrop_file, 'backdrops')
         
-        # Save video (optional)
+        # Process video (optional but convert to HLS if provided)
         if 'video' in request.files:
             print("[DEBUG] Video file found in request.files")
             video_file = request.files['video']
             if video_file.filename:
-                video_filename = save_video(video_file)
+                print(f"[DEBUG] Processing video: {video_file.filename}")
+                video_file_path, video_folder = save_and_process_video(video_file, title)
+                
+                if not video_file_path:
+                    return jsonify({'error': 'Failed to process video file'}), 400
         
         # Insert movie into database
         conn = get_db_connection()
@@ -170,7 +268,7 @@ def upload_movie():
                 cursor.execute(insert_query, (
                     title, original_title, overview, release_date, genre_ids,
                     original_language, vote_average, vote_count, runtime,
-                    poster_filename, backdrop_filename, video_filename, tag,
+                    poster_filename, backdrop_filename, video_file_path, tag,
                     json.dumps(cast_data)
                 ))
                 
@@ -179,11 +277,12 @@ def upload_movie():
                 
                 print(f"[DEBUG] Movie inserted with ID: {movie_id}")
                 return jsonify({
-                    'message': 'Movie uploaded successfully',
+                    'message': 'Movie uploaded and processed successfully',
                     'movie_id': movie_id,
                     'poster': poster_filename,
                     'backdrop': backdrop_filename,
-                    'video': video_filename
+                    'video_playlist': video_file_path,
+                    'video_folder': video_folder
                 }), 201
                 
         except Exception as e:
@@ -191,15 +290,31 @@ def upload_movie():
             conn.rollback()
             
             # Clean up uploaded files if database insert failed
+            cleanup_files = []
+            
+            # Clean up image files
             for filename, folder in [
                 (poster_filename, 'posters'),
-                (backdrop_filename, 'backdrops'),
-                (video_filename, 'videos')
+                (backdrop_filename, 'backdrops')
             ]:
                 if filename:
                     file_path = os.path.join(UPLOAD_FOLDER, folder, filename)
                     if os.path.exists(file_path):
+                        cleanup_files.append(file_path)
+            
+            # Clean up video folder
+            if video_folder and os.path.exists(video_folder):
+                cleanup_files.append(video_folder)
+            
+            # Perform cleanup
+            for file_path in cleanup_files:
+                try:
+                    if os.path.isdir(file_path):
+                        shutil.rmtree(file_path)
+                    else:
                         os.remove(file_path)
+                except:
+                    pass
             
             return jsonify({'error': 'Failed to save movie to database'}), 500
             
@@ -210,6 +325,27 @@ def upload_movie():
         print(f"[DEBUG] Exception in upload_movie: {e}")
         logging.error(f"Upload error: {e}")
         return jsonify({'error': 'Internal server error'}), 500
+
+# Endpoint để kiểm tra trạng thái FFmpeg
+@admin_bp.route('/admin/check-ffmpeg', methods=['GET'])
+def check_ffmpeg():
+    """Check if FFmpeg is available"""
+    try:
+        result = subprocess.run([FFMPEG_PATH, "-version"], capture_output=True, text=True)
+        if result.returncode == 0:
+            return jsonify({
+                'ffmpeg_available': True,
+                'version_info': result.stdout.split('\n')[0]
+            })
+        else:
+            return jsonify({'ffmpeg_available': False, 'error': result.stderr})
+    except FileNotFoundError:
+        return jsonify({
+            'ffmpeg_available': False, 
+            'error': 'FFmpeg not found. Please install FFmpeg and add it to PATH.'
+        })
+    except Exception as e:
+        return jsonify({'ffmpeg_available': False, 'error': str(e)})
 
 @admin_bp.route('/admin/movies', methods=['GET'])
 @admin_required
@@ -362,8 +498,11 @@ def get_admin_stats():
                 stats['total_users'] = cursor.fetchone()['count']
                 
                 # Total comments
-                cursor.execute("SELECT COUNT(*) as count FROM comments WHERE is_deleted = 0")
-                stats['total_comments'] = cursor.fetchone()['count']
+                cursor.execute("SELECT COUNT(*) as count FROM movie_comments WHERE is_deleted = 0")
+                movie_comments = cursor.fetchone()['count']
+                cursor.execute("SELECT COUNT(*) as count FROM show_comments WHERE is_deleted = 0")
+                show_comments = cursor.fetchone()['count']
+                stats['total_comments'] = movie_comments + show_comments
                 
                 # Movies by tag
                 cursor.execute("""

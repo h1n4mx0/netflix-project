@@ -19,7 +19,8 @@ def login():
         return jsonify({'error': 'Không thể kết nối đến cơ sở dữ liệu'}), 500
     try:
         with conn.cursor() as cursor:
-            cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
+            # Thêm role vào query
+            cursor.execute("SELECT id, email, password, is_verified, role FROM users WHERE email = %s", (email,))
             user = cursor.fetchone()
 
             if not user:
@@ -31,14 +32,28 @@ def login():
             if not user['is_verified']:
                 return jsonify({'error': 'Tài khoản chưa xác minh qua email'}), 403
             
+            # Thêm role vào payload
             payload = {
                 'user_id': user['id'],
+                'email': user['email'],
+                'role': user.get('role', 'user'),  # Default là 'user' nếu không có role
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1)
             }
 
             token = jwt.encode(payload, JWT_SECRET, algorithm='HS256')
-            return jsonify({'token': token})
+            
+            return jsonify({
+                'token': token,
+                'user': {
+                    'id': user['id'],
+                    'email': user['email'],
+                    'role': user.get('role', 'user')
+                }
+            })
 
     except Exception as e:
+        print(f"Login error: {e}")
         return jsonify({'error': 'Lỗi server'}), 500
-
+    finally:
+        if conn:
+            conn.close()

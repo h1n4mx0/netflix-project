@@ -18,11 +18,11 @@ export default function Favorites() {
   const fetchFavorites = async () => {
     try {
       setLoading(true)
-      
+
       // Lấy danh sách yêu thích
       const favoritesRes = await axios.get('/favorites')
       const favorites = favoritesRes.data.favorites || []
-      
+
       if (favorites.length === 0) {
         setFavoriteMovies([])
         return
@@ -30,10 +30,10 @@ export default function Favorites() {
 
       // Lấy thông tin chi tiết từng item
       const itemPromises = favorites.map(favorite => {
-        const endpoint = favorite.item_type === 'show' 
-          ? `/shows/${favorite.item_id}` 
+        const endpoint = favorite.item_type === 'show'
+          ? `/shows/${favorite.item_id}`
           : `/movies/${favorite.item_id}`
-          
+
         return axios.get(endpoint).then(res => ({
           ...res.data,
           item_type: favorite.item_type,
@@ -43,52 +43,69 @@ export default function Favorites() {
           return null
         })
       })
-      
+
       const itemResponses = await Promise.all(itemPromises)
       const items = itemResponses.filter(res => res !== null)
-      
+
       setFavoriteMovies(items)
     } catch (error) {
       console.error('Error fetching favorites:', error)
       if (error.response?.status === 401) {
-        setToast({ 
-          open: true, 
-          message: 'Bạn cần đăng nhập để xem danh sách yêu thích', 
-          severity: 'warning' 
+        setToast({
+          open: true,
+          message: 'Bạn cần đăng nhập để xem danh sách yêu thích',
+          severity: 'warning'
         })
       } else {
-        setToast({ 
-          open: true, 
-          message: 'Có lỗi xảy ra khi tải danh sách yêu thích', 
-          severity: 'error' 
+        setToast({
+          open: true,
+          message: 'Có lỗi xảy ra khi tải danh sách yêu thích',
+          severity: 'error'
         })
       }
     } finally {
       setLoading(false)
     }
+  }
+
+  const getPosterUrl = (item) => {
+    const posterField = item.item_type === 'show' ? 'show_poster' : 'poster_path'
+    const posterPath = item[posterField]
+
+    if (!posterPath) {
+      return 'https://via.placeholder.com/300x450?text=No+Poster'
     }
 
+    // Nếu đã có API prefix thì dùng luôn
+    if (posterPath.startsWith('/api/')) {
+      return posterPath
+    }
+
+    // Thêm API prefix tương ứng
+    const staticPath = item.item_type === 'show' ? 'show-poster' : 'posters'
+    return `/api/static/${staticPath}/${posterPath}`
+  }
   const removeFavorite = async (movieId) => {
     try {
       await axios.delete(`/favorites/${movieId}`)
       setFavoriteMovies(prev => prev.filter(movie => movie.id !== movieId))
-      setToast({ 
-        open: true, 
-        message: 'Đã xóa khỏi danh sách yêu thích', 
-        severity: 'success' 
+      setToast({
+        open: true,
+        message: 'Đã xóa khỏi danh sách yêu thích',
+        severity: 'success'
       })
     } catch (error) {
       console.error('Error removing favorite:', error)
-      setToast({ 
-        open: true, 
-        message: 'Có lỗi xảy ra khi xóa phim', 
-        severity: 'error' 
+      setToast({
+        open: true,
+        message: 'Có lỗi xảy ra khi xóa phim',
+        severity: 'error'
       })
     }
   }
 
   const filteredAndSortedMovies = favoriteMovies
-    .filter(movie => 
+    .filter(movie =>
       movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       movie.original_title?.toLowerCase().includes(searchTerm.toLowerCase())
     )
@@ -150,7 +167,7 @@ export default function Favorites() {
                   className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 transition-all"
                 />
               </div>
-              
+
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
@@ -194,11 +211,11 @@ export default function Favorites() {
                   {/* Poster */}
                   <div className="relative aspect-[2/3]">
                     <img
-                      src={movie.poster_path || 'https://via.placeholder.com/300x450?text=No+Poster'}
+                      src={getPosterUrl(movie) || 'https://via.placeholder.com/300x450?text=No+Poster'}
                       alt={movie.title}
                       className="w-full h-full object-cover"
                     />
-                    
+
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                       <div className="flex gap-2">
@@ -236,16 +253,16 @@ export default function Favorites() {
 
                   {/* Movie Info */}
                   <div className="p-3">
-                    <Link to={`/browse/movie/${movie.id}`}>
+                    <Link to={movie.item_type === 'show' ? `/browse/shows/${movie.id}` : `/browse/movie/${movie.id}`}>
                       <h3 className="font-semibold text-sm mb-2 line-clamp-2 group-hover:text-yellow-400 transition-colors">
                         {movie.title}
                       </h3>
                     </Link>
-                    
+
                     <div className="flex items-center gap-2 text-xs text-gray-400">
                       <Calendar size={12} />
                       <span>{new Date(movie.release_date).getFullYear() || 'N/A'}</span>
-                      
+
                       {movie.runtime && (
                         <>
                           <span>•</span>
@@ -286,8 +303,8 @@ export default function Favorites() {
         onClose={() => setToast({ ...toast, open: false })}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Alert 
-          onClose={() => setToast({ ...toast, open: false })} 
+        <Alert
+          onClose={() => setToast({ ...toast, open: false })}
           severity={toast.severity}
           variant="filled"
         >

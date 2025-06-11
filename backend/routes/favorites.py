@@ -28,7 +28,6 @@ def add_favorite():
     
     item_id = data.get('item_id') or data.get('movie_id')  # Backward compatibility
     item_type = data.get('item_type', 'movie')  # Default to movie for backward compatibility
-    
     if not user_id or not item_id:
         return jsonify({'error': 'Thiếu thông tin'}), 400
     
@@ -39,7 +38,7 @@ def add_favorite():
     try:
         with conn.cursor() as cursor:
             cursor.execute(
-                "INSERT IGNORE INTO favorites (user_id, item_id, item_type) VALUES (%s, %s, %s)", 
+                "INSERT INTO favorites (user_id, item_id, item_type) VALUES (%s, %s, %s)", 
                 (user_id, item_id, item_type)
             )
         conn.commit()
